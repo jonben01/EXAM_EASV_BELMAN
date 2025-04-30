@@ -8,9 +8,9 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.OrderController">
    <children>
-      <TextField alignment="CENTER" layoutX="226.0" layoutY="188.0" promptText="Order Number" />
+      <TextField fx:id="OrderNumber" alignment="CENTER" layoutX="226.0" layoutY="188.0" promptText="Order Number" />
       <Text layoutX="241.0" layoutY="183.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Input Order Number" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#004b88" height="54.0" layoutY="14.0" stroke="#7fa8c5" strokeType="INSIDE" width="600.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="54.0" layoutY="14.0" stroke="WHITE" strokeType="INSIDE" width="57.0" />
@@ -20,6 +20,6 @@
          </image>
       </ImageView>
       <Button layoutX="532.0" layoutY="26.0" mnemonicParsing="false" text="➡️" />
-      <Button layoutX="241.0" layoutY="226.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="117.0" text="Search" />
+      <Button fx:id="btnSearch" layoutX="241.0" layoutY="226.0" mnemonicParsing="false" onAction="#handleSearch" prefHeight="30.0" prefWidth="117.0" text="Search" />
    </children>
 </AnchorPane>
