@@ -8,7 +8,8 @@ package exam_easv_belman.GUI;
 public enum View {
     LOGIN("/views/LoginView.fxml"),
     ORDER("/views/OrderView.fxml"),
-    ADMIN("/views/AdminView.fxml");
+    ADMIN("/views/AdminView.fxml"),
+    USER_CREATION_MODAL("/views/UserCreationView.fxml");
 
     private final String FXML;
 

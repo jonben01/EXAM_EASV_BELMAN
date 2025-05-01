@@ -2,14 +2,12 @@ package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
-import exam_easv_belman.BLL.util.PBKDF2PasswordUtil;
 import exam_easv_belman.GUI.Models.UserModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -19,7 +17,7 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
 
-    private final UserModel userModel;
+    private UserModel userModel;
 
     @FXML
     private TextField txtUsername;
@@ -29,14 +27,19 @@ public class LoginController implements Initializable {
     private Button btnLogin;
 
     public LoginController() {
-        userModel = new UserModel();
+        try {
+            userModel = new UserModel();
+        } catch (Exception e) {
+            e.printStackTrace();
+            //TODO alert
+        }
     }
 
 
     @FXML
     private void handleLogin(ActionEvent actionEvent) {
         String username = txtUsername.getText().trim();
-        char[] rawPassword = txtPassword.getText().toCharArray();
+        String rawPassword = txtPassword.getText().trim();
 
         try {
             //TODO implement the called method

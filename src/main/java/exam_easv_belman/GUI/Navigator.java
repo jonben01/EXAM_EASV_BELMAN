@@ -3,7 +3,9 @@ package exam_easv_belman.GUI;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -60,4 +62,24 @@ public class Navigator {
         }
     }
 
+    public Object showModal(View view) {
+        try {
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("User Creation");
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            return loader.getController();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            //TODO AlertClass.alert SOMETHING or rather send the exception up as an Exception or custom one
+            return null;
+        }
+    }
 }

@@ -2,16 +2,25 @@ package exam_easv_belman.GUI.Models;
 
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.UserManager;
+import javafx.collections.ObservableList;
 
 public class UserModel {
 
     private UserManager userManager;
 
-    public UserModel() {
+    public UserModel() throws Exception {
         userManager = new UserManager();
     }
 
-    public User authenticateUser(String username, char[] rawPassword) throws Exception {
+    public User authenticateUser(String username, String rawPassword) throws Exception {
         return userManager.authenticateUser(username, rawPassword);
+    }
+
+    public User createUser(User user) throws Exception {
+        return userManager.createUser(user);
+    }
+
+    public ObservableList<User> getAllUsers() throws Exception {
+        return userManager.getAllUsers();
     }
 }

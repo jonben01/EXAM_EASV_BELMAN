@@ -1,25 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="472.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.AdminController">
-   <children>
-      <Button fx:id="btnLogout" layoutX="481.0" layoutY="64.0" mnemonicParsing="false" onAction="#handleLogout" text="logout" />
-      <ListView fx:id="lstUsers" layoutX="40.0" layoutY="144.0" prefHeight="246.0" prefWidth="200.0" />
-      <TextField fx:id="txtSearch" layoutX="40.0" layoutY="109.0" prefHeight="26.0" prefWidth="200.0" text="search" />
-      <HBox layoutX="40.0" layoutY="50.0" prefHeight="54.0" prefWidth="432.0" />
-      <VBox layoutX="317.0" layoutY="138.0" prefHeight="257.0" prefWidth="173.0">
+
+<BorderPane prefHeight="768.0" prefWidth="952.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.AdminController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="txtUsername" text="username" />
-            <TextField fx:id="txtPassword" text="password" />
-            <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" text="delete user" />
-            <Button fx:id="btnCreateUser" mnemonicParsing="false" onAction="#handleCreateUser" text="new user" />
+            <HBox prefHeight="70.0" prefWidth="698.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="BELMAN BAR + LOG OUT BUTTON ETC" />
+                  <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#handleLogout" text="logout" />
+                  <Label fx:id="lblCurrentUser" text="Current user:">
+                     <HBox.margin>
+                        <Insets left="100.0" top="30.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox prefHeight="60.0" prefWidth="698.0">
+               <children>
+                  <TextField fx:id="txtSearch" prefHeight="28.0" prefWidth="211.0" text="search" />
+                  <Button fx:id="btnCreateUser" mnemonicParsing="false" onAction="#handleCreateUser" text="new user" />
+               </children>
+            </HBox>
          </children>
       </VBox>
-   </children>
-</AnchorPane>
+   </top>
+   <right>
+      <VBox minWidth="454.0" prefHeight="629.0" prefWidth="454.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="314.0" prefWidth="212.0">
+               <children>
+                  <TextField fx:id="txtUsername" promptText="username" />
+                  <TextField fx:id="txtPassword" promptText="password" />
+                  <TextField fx:id="txtFirstName" promptText="first name" />
+                  <TextField fx:id="txtLastName" promptText="last name" />
+                  <TextField fx:id="txtEmail" promptText="email" />
+                  <TextField fx:id="txtPhone" promptText="phone" />
+                  <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" text="delete user" />
+                  <ComboBox fx:id="cmbRole" prefWidth="150.0" />
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets left="6.0" right="12.0" />
+         </padding>
+      </VBox>
+   </right>
+   <left>
+      <VBox alignment="TOP_CENTER" minWidth="460.0" BorderPane.alignment="CENTER">
+         <children>
+            <ListView fx:id="lstUsers" prefHeight="436.0" prefWidth="320.0" />
+         </children>
+         <padding>
+            <Insets left="12.0" right="6.0" />
+         </padding>
+      </VBox>
+   </left>
+</BorderPane>
