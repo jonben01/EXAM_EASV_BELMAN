@@ -6,20 +6,23 @@ import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 
-public class QCController {
-
+public class SendViewController {
 
     public void handleReturn(ActionEvent actionEvent) {
         try{
-            Navigator.getInstance().goTo(View.ORDER);
+            Navigator.getInstance().goTo(View.QCView);
         }catch(Exception e){
             e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load OrderView", Alert.AlertType.ERROR);
         }
     }
 
-    public void handleSendReport(ActionEvent actionEvent) {
+    public void handlePreview(ActionEvent actionEvent) {
+        //Todo preview report
 
-        //Todo send user to send view using navigator method
+    }
+
+    public void handleSend(ActionEvent actionEvent) {
+        //Todo send report using gmailer class like previous project
     }
 }

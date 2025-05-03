@@ -6,12 +6,9 @@ import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.Node;
+
 import javafx.event.ActionEvent;
-import java.io.IOException;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,13 +28,16 @@ public class OrderController {
 
         if (inputOrderNumber.isEmpty()) {
             AlertHelper.showAlert("Error", "Please enter an order number", Alert.AlertType.ERROR);
+            return;
         }
 
         if (!orders.contains(inputOrderNumber)) {
             AlertHelper.showAlert("Error", "The Order Number Entered Does Not Exist", Alert.AlertType.ERROR);
-        } else {
-            GoToPhotoDocView(event, inputOrderNumber);
+            return;
         }
+
+        GoToPhotoDocView(event, inputOrderNumber);
+
     }
 
     public void handleLogOut(ActionEvent actionEvent) {
@@ -49,20 +49,16 @@ public class OrderController {
 
     private void GoToPhotoDocView(ActionEvent event, String orderNumber){
         try {
-            Navigator navigator = Navigator.getInstance();
-            navigator.goTo(View.PHOTO_DOC);
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(View.PHOTO_DOC.getFXML()));
-
-            PhotoDocController controller = loader.getController();
-            if (controller !=null){
-                controller.setOrderNumber(orderNumber);
-            }
-
-        } catch (Exception e){
+            Navigator.getInstance().goTo(View.PHOTO_DOC, controller -> {
+                if (controller instanceof PhotoDocController) {
+                    ((PhotoDocController) controller).setOrderNumber(orderNumber);
+                }
+            });
+        } catch (Exception e) {
             e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
         }
+
     }
 
 

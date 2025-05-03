@@ -9,6 +9,7 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * The Navigator class is responsible for managing navigation between different views in the application.
@@ -20,6 +21,8 @@ public class Navigator {
 
     private static Navigator instance;
     private Stage stage;
+    private Object currentController;
+
 
     private Navigator() {
     }
@@ -62,6 +65,30 @@ public class Navigator {
         }
     }
 
+    /**
+     * Navigates to the specified view and allows setting the controller with custom data.
+     *
+     * @param view The target view to navigate to.
+     * @param controllerConsumer A function that will be applied to the controller, allowing parameters to be set.
+     */
+    public void goTo(View view, Consumer<Object> controllerConsumer) {
+        try {
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(view.getFXML())));
+            Parent root = loader.load();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            // Get the controller and apply the provided configuration
+            currentController = loader.getController();
+            if (controllerConsumer != null && currentController != null) {
+                controllerConsumer.accept(currentController);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public Object showModal(View view) {
         try {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
@@ -82,4 +109,10 @@ public class Navigator {
             return null;
         }
     }
+
+    public Object getCurrentController() {
+        return currentController;
+    }
+
+
 }
