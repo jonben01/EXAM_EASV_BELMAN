@@ -1,5 +1,8 @@
 package exam_easv_belman.GUI.Controllers;
 
+import exam_easv_belman.GUI.Navigator;
+import exam_easv_belman.GUI.View;
+import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
@@ -27,40 +30,44 @@ public class OrderController {
         String inputOrderNumber = OrderNumber.getText();
 
         if (inputOrderNumber.isEmpty()) {
-            showAlert("Error", "Please enter an order number", Alert.AlertType.ERROR);
+            AlertHelper.showAlert("Error", "Please enter an order number", Alert.AlertType.ERROR);
         }
 
         if (!orders.contains(inputOrderNumber)) {
-            showAlert("Error", "The Order Number Entered Does Not Exist", Alert.AlertType.ERROR);
+            AlertHelper.showAlert("Error", "The Order Number Entered Does Not Exist", Alert.AlertType.ERROR);
         } else {
             GoToPhotoDocView(event, inputOrderNumber);
         }
     }
 
+    public void handleLogOut(ActionEvent actionEvent) {
+        //Should probably make sure the user is logged out
+
+        Navigator.getInstance().goTo(View.LOGIN);
+
+    }
+
     private void GoToPhotoDocView(ActionEvent event, String orderNumber){
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/PhotoDocView.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(loader.load());
+            Navigator navigator = Navigator.getInstance();
+            navigator.goTo(View.PHOTO_DOC);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(View.PHOTO_DOC.getFXML()));
 
             PhotoDocController controller = loader.getController();
-            controller.setOrderNumber(orderNumber);
+            if (controller !=null){
+                controller.setOrderNumber(orderNumber);
+            }
 
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e){
+        } catch (Exception e){
             e.printStackTrace();
-            showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+            AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
         }
     }
 
 
-    private void showAlert(String title, String content, Alert.AlertType alerttype){
-        Alert alert = new Alert(alerttype);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
+
+
 
 
 }

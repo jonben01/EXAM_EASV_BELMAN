@@ -9,7 +9,9 @@ public enum View {
     LOGIN("/views/LoginView.fxml"),
     ORDER("/views/OrderView.fxml"),
     ADMIN("/views/AdminView.fxml"),
-    USER_CREATION_MODAL("/views/UserCreationView.fxml");
+    USER_CREATION_MODAL("/views/UserCreationView.fxml"),
+    PHOTO_DOC("/views/PhotoDocView.fxml");
+
 
     private final String FXML;
 
