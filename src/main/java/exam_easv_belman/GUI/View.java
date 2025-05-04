@@ -11,7 +11,8 @@ public enum View {
     ADMIN("/views/AdminView.fxml"),
     USER_CREATION_MODAL("/views/UserCreationView.fxml"),
     PHOTO_DOC("/views/PhotoDocView.fxml"),
-    QCView("/views/QCView.fxml");
+    QCView("/views/QCView.fxml"),
+    SEND_VIEW("/views/SendView.fxml");
 
 
     private final String FXML;

@@ -1,6 +1,9 @@
 package exam_easv_belman.GUI.Controllers;
 
+import exam_easv_belman.BE.Role;
+import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.Navigator;
+import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.fxml.FXML;
@@ -36,13 +39,20 @@ public class OrderController {
             return;
         }
 
-        GoToPhotoDocView(event, inputOrderNumber);
+        SessionManager.getInstance().setCurrentOrderNumber(inputOrderNumber);
+
+        User currentUser = SessionManager.getInstance().getCurrentUser();
+
+        if (currentUser != null && currentUser.getRole() == Role.QC){
+            GoToQCView(event, inputOrderNumber);
+        } else {
+            GoToPhotoDocView(event, inputOrderNumber);
+        }
 
     }
 
     public void handleLogOut(ActionEvent actionEvent) {
-        //Should probably make sure the user is logged out
-
+        SessionManager.getInstance().logout();
         Navigator.getInstance().goTo(View.LOGIN);
 
     }
@@ -60,6 +70,22 @@ public class OrderController {
         }
 
     }
+
+    private void GoToQCView(ActionEvent event, String orderNumber){
+        try {
+            Navigator.getInstance().goTo(View.QCView, controller -> {
+                if (controller instanceof QCController) {
+                    ((QCController) controller).setOrderNumber(orderNumber);
+                }
+            });
+            } catch (Exception e) {
+            e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+
+        }
+
+    }
+
 
 
 

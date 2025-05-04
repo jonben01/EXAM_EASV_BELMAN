@@ -6,6 +6,7 @@ public class SessionManager {
     //volatile to stop partially created objects from being used.
     private static volatile SessionManager instance;
     private User currentUser;
+    private String currentOrderNumber;
 
     private SessionManager() {}
 
@@ -33,11 +34,20 @@ public class SessionManager {
         return currentUser;
     }
 
+    public void setCurrentOrderNumber(String orderNumber) {
+        this.currentOrderNumber = orderNumber;
+    }
+    public String getCurrentOrderNumber() {
+        return currentOrderNumber;
+    }
+
+
     //TODO remove souts when this works
     public void logout() {
         System.out.println(currentUser + " logged out");
         currentUser = null;
         System.out.println("Logged out successfully");
+        currentOrderNumber = null;
 
     }
 }

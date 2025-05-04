@@ -37,7 +37,7 @@
                 <Font size="24.0" />
             </font>
         </Text>
-        <Button fx:id="btnSendReport" layoutX="539.0" layoutY="425.0" mnemonicParsing="false" onAction="#handleSendReport" text="Send Report">
+        <Button fx:id="brtPrepareReport" layoutX="539.0" layoutY="425.0" mnemonicParsing="false" onAction="#handlePrepareReport" text="Send Report">
             <font>
                 <Font size="24.0" />
             </font>
