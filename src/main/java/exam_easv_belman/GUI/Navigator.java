@@ -57,8 +57,16 @@ public class Navigator {
      */
     public void goTo(View view) {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
-            stage.setScene(new Scene(root));
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
+            Parent root = loader.load();
+
+            // Laver kun en ny scene hvis der er brug for det. ellers bliver der bare direkte sat et nyt root.
+            if (stage.getScene() == null) {
+                stage.setScene(new Scene(root));
+            } else {
+                stage.getScene().setRoot(root);
+            }
+            
             stage.centerOnScreen();
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,20 +84,25 @@ public class Navigator {
         try {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(view.getFXML())));
             Parent root = loader.load();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setScene(new Scene(root));
+            
+            // Laver kun en ny scene hvis der er brug for det. ellers bliver der bare direkte sat et nyt root.
+            if (stage.getScene() == null) {
+                stage.setScene(new Scene(root));
+            } else {
+                stage.getScene().setRoot(root);
+            }
+            
             stage.show();
 
-            // Get the controller and apply the provided configuration
-            currentController = loader.getController();
-            if (controllerConsumer != null && currentController != null) {
-                controllerConsumer.accept(currentController);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        // Get the controller and apply the provided configuration
+        currentController = loader.getController();
+        if (controllerConsumer != null && currentController != null) {
+            controllerConsumer.accept(currentController);
         }
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
 
 
     public Object showModal(View view) {
