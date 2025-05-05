@@ -59,7 +59,6 @@ public class Navigator {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/css/general.css").toExternalForm());
             stage.setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,7 +77,6 @@ public class Navigator {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(view.getFXML())));
             Parent root = loader.load();
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/css/general.css").toExternalForm());
             stage.setScene(scene);
             stage.show();
 
@@ -91,6 +89,7 @@ public class Navigator {
             e.printStackTrace();
         }
     }
+
 
 
     public Object showModal(View view) {
