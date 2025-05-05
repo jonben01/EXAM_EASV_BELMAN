@@ -1,5 +1,6 @@
 package exam_easv_belman.DAL;
 
+import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.User;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
@@ -17,7 +18,7 @@ public interface IPhotoDataAccess {
 
     void insertImagePathToDatabase(Connection connection, List<Path> filePath, User uploader, String orderID) throws SQLException;
 
-    ObservableList<Image> getImagesFromDatabase();
+    ObservableList<Photo> getImagesFromDatabase(String orderNumber) throws SQLException;
 
     void deleteImageFromDatabase();
 

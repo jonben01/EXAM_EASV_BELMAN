@@ -1,7 +1,9 @@
 package exam_easv_belman.GUI.Models;
 
+import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.PhotoManager;
+import javafx.collections.ObservableList;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -22,5 +24,8 @@ public class PhotoModel {
                                     User uploader,
                                     String orderID) throws Exception {
         return photoManager.saveImageAndPath(images, fileNames, uploader, orderID);
+    }
+    public ObservableList<Photo> getImagesFromDatabase(String orderNumber) throws Exception {
+        return photoManager.getImagesFromDatabase(orderNumber);
     }
 }

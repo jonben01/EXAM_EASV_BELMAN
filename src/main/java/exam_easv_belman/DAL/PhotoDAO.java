@@ -1,5 +1,7 @@
 package exam_easv_belman.DAL;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
+import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.User;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
@@ -13,6 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -173,8 +176,27 @@ public class PhotoDAO implements IPhotoDataAccess{
     }
 
     @Override
-    public ObservableList<Image> getImagesFromDatabase() {
-        return null;
+    public ObservableList<Photo> getImagesFromDatabase(String orderNumber) throws SQLException {
+        ObservableList<Photo> photos = javafx.collections.FXCollections.observableArrayList();
+        String sql = "SELECT * FROM Photos WHERE order_number = ?";
+
+        try(Connection conn = dbConnector.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setString(1, orderNumber);
+
+            ResultSet rs = ps.executeQuery();
+            while(rs.next())
+            {
+                Photo tempImg = new Photo();
+                tempImg.setId(rs.getInt("id"));
+                tempImg.setOrderNumber(rs.getString("order_Number"));
+                tempImg.setFilepath(rs.getString("file_path"));
+                tempImg.setUploadedBy(rs.getInt("uploaded_by"));
+                tempImg.setUploadTime(rs.getObject("uploaded_at", LocalDateTime.class));
+                photos.add(tempImg);
+            }
+            System.out.println("length:" + photos.size());
+            return photos;
+        }
     }
 
     @Override
