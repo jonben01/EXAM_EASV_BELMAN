@@ -10,9 +10,11 @@ public enum View {
     ORDER("/views/OrderView.fxml"),
     ADMIN("/views/AdminView.fxml"),
     USER_CREATION_MODAL("/views/UserCreationView.fxml"),
+    CAMERA("/views/CameraView.fxml"),
     PHOTO_DOC("/views/PhotoDocView.fxml"),
     QCView("/views/QCView.fxml"),
-    SEND_VIEW("/views/SendView.fxml");
+    SEND_VIEW("/views/SendView.fxml"),
+    IMG_VIEW("/views/ImageView.fxml");
 
 
     private final String FXML;

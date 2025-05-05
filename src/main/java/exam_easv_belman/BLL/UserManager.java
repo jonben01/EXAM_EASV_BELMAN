@@ -19,18 +19,11 @@ public class UserManager {
         //1. get the user from DAO, throw an exception if user doesnt exist
         //TODO implement the called method
         User user = userDAO.findByUsername(username);
-        if (user == null) {
+        if (user == null || !PBKDF2PasswordUtil.verifyPassword(rawPassword, user.getPassword())) {
             //TODO make a custom InvalidCredentialException, that ideally comes with a default message,
             // so i dont have to write a message everytime its used(which is exactly once....)
             // then pass that exception up the stack. to alert the user.
             throw new Exception();
-        }
-
-        boolean verified = PBKDF2PasswordUtil.verifyPassword(rawPassword, user.getPassword());
-
-        if (!verified) {
-            throw new Exception();
-            //TODO pass something up to the top layer and tell the user they are an idiot.
         }
 
         return user;

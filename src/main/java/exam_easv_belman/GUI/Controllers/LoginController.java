@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -38,15 +39,18 @@ public class LoginController implements Initializable {
 
     @FXML
     private void handleLogin(ActionEvent actionEvent) {
+        login();
+    }
+
+
+    private void login() {
         String username = txtUsername.getText().trim();
         String rawPassword = txtPassword.getText().trim();
 
         try {
-            //TODO implement the called method
             User user = userModel.authenticateUser(username, rawPassword);
             SessionManager.getInstance().setCurrentUser(user);
 
-            //TODO implement the called getRole() method
             Navigator.getInstance().goTo(user.getRole() == Role.ADMIN ? View.ADMIN : View.ORDER);
 
             //TODO implement some sort of visual indicator when something fails, red outline or maybe a text (not popup
@@ -57,9 +61,32 @@ public class LoginController implements Initializable {
         }
     }
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //made to be made, I guess
-
+        enterKeyListeners();
     }
+
+    private void enterKeyListeners() {
+        txtUsername.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                login();
+            }
+        });
+        txtPassword.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                login();
+            }
+        });
+        //TODO remember this when password field is added
+        /*
+        txtPasswordVisible.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                login();
+            }
+        });
+
+         */
+    }
+
 }

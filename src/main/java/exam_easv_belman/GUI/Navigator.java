@@ -58,8 +58,8 @@ public class Navigator {
     public void goTo(View view) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
+            stage.setScene(new Scene(root));
+            stage.centerOnScreen();
         } catch (IOException e) {
             e.printStackTrace();
             //TODO AlertClass.alert SOMETHING or rather send the exception up as an Exception or custom one
@@ -78,6 +78,7 @@ public class Navigator {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             stage.setScene(scene);
+            stage.setScene(new Scene(root));
             stage.show();
 
             // Get the controller and apply the provided configuration
@@ -89,7 +90,6 @@ public class Navigator {
             e.printStackTrace();
         }
     }
-
 
 
     public Object showModal(View view) {

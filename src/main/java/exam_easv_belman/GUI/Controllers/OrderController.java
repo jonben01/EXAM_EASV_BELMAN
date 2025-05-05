@@ -26,7 +26,7 @@ public class OrderController {
     private TextField OrderNumber;
 
     //TODO take orders from db not just these hardcoded values
-    private final List<String> orders = Arrays.asList("1001", "1002", "1003");
+    private final List<String> orders = Arrays.asList("1001", "1002", "1003", "ORD-1001");
     @FXML
     private Button btnSearch;
     @FXML
@@ -104,11 +104,6 @@ public class OrderController {
         }
 
     }
-
-
-
-
-
 
 
 }

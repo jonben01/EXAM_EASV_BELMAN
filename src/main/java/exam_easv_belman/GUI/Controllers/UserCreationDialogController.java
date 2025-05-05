@@ -50,6 +50,8 @@ public class UserCreationDialogController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         cmbRole.getItems().addAll(Role.values());
+
+        //TODO escape key listener to close window.
     }
 
     @FXML

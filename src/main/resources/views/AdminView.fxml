@@ -2,69 +2,157 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
 
-
-<BorderPane prefHeight="768.0" prefWidth="952.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.AdminController">
+<BorderPane prefHeight="768.0" prefWidth="952.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.AdminController">
    <top>
-      <VBox BorderPane.alignment="CENTER">
+      <VBox prefHeight="89.0" prefWidth="952.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox prefHeight="70.0" prefWidth="698.0">
+            <HBox fx:id="belmanBar" prefHeight="70.0" prefWidth="698.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="BELMAN BAR + LOG OUT BUTTON ETC" />
-                  <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#handleLogout" text="logout" />
-                  <Label fx:id="lblCurrentUser" text="Current user:">
+                  <StackPane fx:id="logoPane">
+                     <children>
+                        <ImageView fx:id="vboxLogo" fitHeight="54.0" fitWidth="54.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/BELMAN_Logo_264pxl.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </StackPane>
+                  <Region prefHeight="42.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <Label fx:id="lblCurrentUser">
                      <HBox.margin>
-                        <Insets left="100.0" top="30.0" />
+                        <Insets right="10.0" top="19.0" />
                      </HBox.margin>
                   </Label>
+                  <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#handleLogout">
+                     <HBox.margin>
+                        <Insets right="6.0" top="7.0" />
+                     </HBox.margin>
+                     <graphic>
+                        <ImageView fx:id="logoutImage" fitHeight="22.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8-logout-100.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
                </children>
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
             </HBox>
-            <HBox prefHeight="60.0" prefWidth="698.0">
+            <HBox prefHeight="31.0" prefWidth="928.0">
                <children>
-                  <TextField fx:id="txtSearch" prefHeight="28.0" prefWidth="211.0" text="search" />
-                  <Button fx:id="btnCreateUser" mnemonicParsing="false" onAction="#handleCreateUser" text="new user" />
+                  <TextField fx:id="txtSearch" disable="true" prefHeight="30.0" prefWidth="85.0" promptText="🔍 Search ---- FIX RESIZING, SO IT MATCHES THE BOX BELOW" HBox.hgrow="ALWAYS" />
+                  <Region HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Region>
+                  <Button fx:id="btnCreateUser" mnemonicParsing="false" onAction="#handleCreateUser" prefHeight="26.0" prefWidth="74.0" text="new user">
+                     <HBox.margin>
+                        <Insets right="12.0" />
+                     </HBox.margin></Button>
                </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </HBox>
          </children>
+         <BorderPane.margin>
+            <Insets bottom="6.0" />
+         </BorderPane.margin>
       </VBox>
    </top>
-   <right>
-      <VBox minWidth="454.0" prefHeight="629.0" prefWidth="454.0" BorderPane.alignment="CENTER">
+   <center>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox prefHeight="314.0" prefWidth="212.0">
+            <VBox alignment="TOP_CENTER" minWidth="460.0" styleClass="Vbox" HBox.hgrow="ALWAYS">
                <children>
-                  <TextField fx:id="txtUsername" promptText="username" />
-                  <TextField fx:id="txtPassword" promptText="password" />
-                  <TextField fx:id="txtFirstName" promptText="first name" />
-                  <TextField fx:id="txtLastName" promptText="last name" />
-                  <TextField fx:id="txtEmail" promptText="email" />
-                  <TextField fx:id="txtPhone" promptText="phone" />
-                  <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" text="delete user" />
-                  <ComboBox fx:id="cmbRole" prefWidth="150.0" />
+                  <HBox alignment="CENTER_LEFT" prefHeight="26.0" prefWidth="460.0">
+                     <children>
+                        <Label text="Users">
+                           <HBox.margin>
+                              <Insets left="12.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="6.0" top="12.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <ListView fx:id="lstUsers" prefHeight="436.0" prefWidth="320.0" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets bottom="6.0" />
+                     </VBox.margin>
+                  </ListView>
                </children>
+               <HBox.margin>
+                  <Insets bottom="18.0" right="6.0" top="6.0" />
+               </HBox.margin>
+            </VBox>
+            <VBox prefHeight="666.0" prefWidth="537.0" styleClass="Vbox" HBox.hgrow="ALWAYS">
+               <children>
+                  <VBox prefHeight="314.0" prefWidth="212.0" spacing="10.0">
+                     <children>
+                        <Label text="User Details">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label text="Username" />
+                        <TextField fx:id="txtUsername" prefHeight="26.0" prefWidth="286.0" promptText="username" />
+                        <Label text="Password" />
+                        <TextField fx:id="txtPassword" promptText="password" />
+                        <Label text="First Name" />
+                        <TextField fx:id="txtFirstName" promptText="first name" />
+                        <Label text="Last Name" />
+                        <TextField fx:id="txtLastName" promptText="last name" />
+                        <Label text="Email Address" />
+                        <TextField fx:id="txtEmail" promptText="email" />
+                        <Label text="Phone Number" />
+                        <TextField fx:id="txtPhone" promptText="phone" />
+                        <HBox alignment="CENTER_RIGHT" prefHeight="10.0" prefWidth="438.0">
+                           <children>
+                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" text="delete user" />
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                           <padding>
+                              <Insets top="6.0" />
+                           </padding>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <HBox.margin>
+                  <Insets bottom="18.0" left="6.0" top="6.0" />
+               </HBox.margin>
             </VBox>
          </children>
-         <padding>
-            <Insets left="6.0" right="12.0" />
-         </padding>
-      </VBox>
-   </right>
-   <left>
-      <VBox alignment="TOP_CENTER" minWidth="460.0" BorderPane.alignment="CENTER">
-         <children>
-            <ListView fx:id="lstUsers" prefHeight="436.0" prefWidth="320.0" />
-         </children>
-         <padding>
-            <Insets left="12.0" right="6.0" />
-         </padding>
-      </VBox>
-   </left>
+      </HBox>
+   </center>
+   <padding>
+      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+   </padding>
 </BorderPane>

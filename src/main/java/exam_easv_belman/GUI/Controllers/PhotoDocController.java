@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
@@ -16,9 +17,13 @@ import java.util.Objects;
 
 public class PhotoDocController {
     @FXML
+    public Button btnOpenCamera;
+    @FXML
     private Text txtOrderNumber;
     @FXML
     private Button btnPrev;
+
+    private String orderNumber;
 
 
     @FXML
@@ -30,6 +35,17 @@ public class PhotoDocController {
     public void setOrderNumber(String orderNumber) {
         SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
         txtOrderNumber.setText(orderNumber);
+        this.orderNumber = orderNumber;
+    }
+
+    public void handleCamera(ActionEvent actionEvent) {
+        String orderNumber = txtOrderNumber.getText();
+
+        Navigator.getInstance().goTo(View.CAMERA, controller -> {
+            if (controller instanceof CameraController) {
+                ((CameraController) controller).setOrderNumber(orderNumber);
+            }
+        });
 
     }
 

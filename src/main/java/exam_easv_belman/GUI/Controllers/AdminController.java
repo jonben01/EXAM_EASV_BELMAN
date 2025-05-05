@@ -34,8 +34,6 @@ public class AdminController implements Initializable {
     @FXML
     public TextField txtSearch;
     @FXML
-    public ComboBox<Role> cmbRole;
-    @FXML
     public TextField txtFirstName;
     @FXML
     public TextField txtLastName;
@@ -60,7 +58,7 @@ public class AdminController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         populateUserList();
-        //lblCurrentUser.setText(SessionManager.getInstance().getCurrentUser().getUsername());
+        lblCurrentUser.setText(SessionManager.getInstance().getCurrentUser().getUsername());
     }
 
     @FXML
