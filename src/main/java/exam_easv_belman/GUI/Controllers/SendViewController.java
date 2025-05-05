@@ -1,5 +1,6 @@
 package exam_easv_belman.GUI.Controllers;
 
+import exam_easv_belman.BLL.util.PdfGeneratorUtil;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
@@ -9,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
@@ -22,6 +24,10 @@ public class SendViewController implements Initializable {
     private Text txtOrderNumber;
     @FXML
     private Button btnPrev;
+    @FXML
+    private TextField txtEmail;
+    @FXML
+    private TextField txtComment;
 
     public void setOrderNumber(String orderNumber) {
         SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
@@ -33,7 +39,7 @@ public class SendViewController implements Initializable {
         Image img = new Image(getClass().getResourceAsStream("/images/icon-log.png"));
         ImageView imgView = new ImageView(img);
         btnPrev.setGraphic(imgView);
-    } 
+    }
 
     public void handleReturn(ActionEvent actionEvent) {
         String orderNumber = SessionManager.getInstance().getCurrentOrderNumber();
@@ -54,9 +60,8 @@ public class SendViewController implements Initializable {
 
     }
 
-    public void handlePreview(ActionEvent actionEvent) {
-        //Todo preview report
-
+    public void handlePreview(ActionEvent actionEvent) throws Exception {
+        PdfGeneratorUtil.generatePdf("src/main/resources/Images/generatedPDF.pdf", txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText());
     }
 
     public void handleSend(ActionEvent actionEvent) {
