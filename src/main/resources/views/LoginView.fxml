@@ -1,13 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.LoginController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.LoginController">
    <children>
-      <TextField fx:id="txtUsername" layoutX="235.0" layoutY="175.0" promptText="username" />
-      <TextField fx:id="txtPassword" layoutX="244.0" layoutY="241.0" promptText="password" />
-      <Button fx:id="btnLogin" layoutX="258.0" layoutY="295.0" mnemonicParsing="false" onAction="#handleLogin" text="log" />
+      <ImageView fitHeight="218.0" fitWidth="235.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/BELMAN_Logo_264pxl.png" />
+         </image>
+      </ImageView>
+      <TextField fx:id="txtUsername" maxWidth="600.0" prefHeight="37.0" prefWidth="543.0" promptText="Username" stylesheets="@../css/general.css" VBox.vgrow="SOMETIMES">
+
+         <VBox.margin>
+            <Insets left="80.0" right="80.0" />
+         </VBox.margin></TextField>
+      <PasswordField fx:id="txtPassword" maxWidth="600.0" prefHeight="39.0" prefWidth="295.0" promptText="Password" styleClass="text-field" stylesheets="@../css/general.css" VBox.vgrow="ALWAYS">
+         <VBox.margin>
+            <Insets left="80.0" right="80.0" top="20.0" />
+         </VBox.margin>
+      </PasswordField>
+      <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#handleLogin" prefHeight="25.0" prefWidth="164.0" stylesheets="@../css/general.css" text="Log in">
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin>
+      </Button>
    </children>
-</AnchorPane>
+</VBox>

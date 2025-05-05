@@ -58,7 +58,9 @@ public class Navigator {
     public void goTo(View view) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/general.css").toExternalForm());
+            stage.setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();
             //TODO AlertClass.alert SOMETHING or rather send the exception up as an Exception or custom one
@@ -75,7 +77,9 @@ public class Navigator {
         try {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(view.getFXML())));
             Parent root = loader.load();
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/general.css").toExternalForm());
+            stage.setScene(scene);
             stage.show();
 
             // Get the controller and apply the provided configuration

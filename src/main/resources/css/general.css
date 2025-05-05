@@ -1,0 +1,58 @@
+/* This doesn't fucking work. Fix needed*/
+@font-face {
+    font-family: "Helvetica";
+    font-weight: normal;
+    src: url("/fonts/Helvetica.woff");
+}
+
+@font-face {
+    font-family: "Helvetica";
+    font-weight: bold;
+    src: url("/fonts/Helvetica-Bold.woff");
+}
+
+@font-face {
+    font-family: 'Helvetica Oblique';
+    src: url("/fonts/Helvetica-Oblique.woff");
+}
+
+@font-face {
+    font-family: "Helvetica Bold Oblique";
+    src: url("/fonts/Helvetica-BoldOblique.woff");
+}
+
+.button {
+    -fx-font-family: "Arial" !important;
+    -fx-font-weight: normal;
+    -fx-background-color: #004B88;
+    -fx-text-fill: white;
+    -fx-font-size: 22;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
+}
+.util-button {
+    -fx-font-family: "Arial" !important;
+    -fx-font-weight: normal;
+    -fx-background-color: #c1c1c1;
+    -fx-font-size: 13;
+    -fx-effect: null;
+}
+.side-button {
+    -fx-effect: null;
+}
+
+.text-field, .password-field {
+    -fx-font-family: "Arial" !important;
+    -fx-font-weight: normal;
+    -fx-font-size: 16;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+}
+
+.orderField {
+    -fx-font-family: "Arial" !important;
+    -fx-font-weight: normal;
+    -fx-font-size: 16;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+}

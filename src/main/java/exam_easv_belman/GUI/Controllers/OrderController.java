@@ -8,12 +8,16 @@ import exam_easv_belman.GUI.View;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 import javafx.event.ActionEvent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 
 public class OrderController {
@@ -23,6 +27,21 @@ public class OrderController {
 
     //TODO take orders from db not just these hardcoded values
     private final List<String> orders = Arrays.asList("1001", "1002", "1003");
+    @FXML
+    private Button btnSearch;
+    @FXML
+    private Button btnLogOut;
+
+    @FXML
+    private void initialize() {
+        Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-search.png")));
+        ImageView imgView = new ImageView(img);
+        btnSearch.setGraphic(imgView);
+        img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-log.png")));
+        imgView = new ImageView(img);
+        btnLogOut.setGraphic(imgView);
+
+    }
 
 
     @FXML

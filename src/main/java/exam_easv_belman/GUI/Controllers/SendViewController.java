@@ -6,18 +6,34 @@ import exam_easv_belman.GUI.View;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
-public class SendViewController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class SendViewController implements Initializable {
 
     @FXML
     private Text txtOrderNumber;
+    @FXML
+    private Button btnPrev;
 
     public void setOrderNumber(String orderNumber) {
         SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
         txtOrderNumber.setText(orderNumber);
     }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Image img = new Image(getClass().getResourceAsStream("/images/icon-log.png"));
+        ImageView imgView = new ImageView(img);
+        btnPrev.setGraphic(imgView);
+    } 
 
     public void handleReturn(ActionEvent actionEvent) {
         String orderNumber = SessionManager.getInstance().getCurrentOrderNumber();
