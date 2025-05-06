@@ -114,17 +114,17 @@
                            </font>
                         </Label>
                         <Label text="Username" />
-                        <TextField fx:id="txtUsername" prefHeight="26.0" prefWidth="286.0" promptText="username" />
+                        <TextField fx:id="txtUsername" editable="false" prefHeight="26.0" prefWidth="286.0" promptText="username" />
                         <Label text="Password" />
-                        <TextField fx:id="txtPassword" promptText="password" />
+                        <TextField fx:id="txtPassword" editable="false" promptText="password" />
                         <Label text="First Name" />
-                        <TextField fx:id="txtFirstName" promptText="first name" />
+                        <TextField fx:id="txtFirstName" editable="false" promptText="first name" />
                         <Label text="Last Name" />
-                        <TextField fx:id="txtLastName" promptText="last name" />
+                        <TextField fx:id="txtLastName" editable="false" promptText="last name" />
                         <Label text="Email Address" />
-                        <TextField fx:id="txtEmail" promptText="email" />
+                        <TextField fx:id="txtEmail" editable="false" promptText="email" />
                         <Label text="Phone Number" />
-                        <TextField fx:id="txtPhone" promptText="phone" />
+                        <TextField fx:id="txtPhone" editable="false" promptText="phone" />
                         <HBox alignment="CENTER_RIGHT" prefHeight="10.0" prefWidth="438.0">
                            <children>
                               <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" text="delete user" />

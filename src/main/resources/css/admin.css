@@ -58,6 +58,21 @@ BorderPane {
     -fx-background-color: rgba(0, 0, 0, 0.05); /* subtle hover effect */
 }
 
+#lstUsers {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 0px;
+}
+
+#lstUsers .list-cell {
+    -fx-background-color: white;
+
+    -fx-border-color: E5E7EB;
+    -fx-border-width: 1 0 1 0;
+    -fx-border-insets: -1 0 -1 0;
+    -fx-padding: 7;
+    -fx-font-size: 18;
+}
+
 #lstUsers .list-cell:empty {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -82,7 +97,6 @@ BorderPane {
 #lstUsers .list-cell:selected {
     -fx-background-color: #EFF6FF;
     -fx-text-fill: black;
-
 }
 #lstUsers:selected {
     -fx-padding: 0px;
@@ -92,4 +106,14 @@ BorderPane {
     -fx-border-width: 0px;
     -fx-padding: 0px;
     -fx-background-insets: 0;
+}
+#lstUsers .list-cell:selected .name-label {
+    -fx-text-fill: black;
+}
+
+#lstUsers .list-cell:selected .role-label {
+    -fx-text-fill: black;
+}
+#lstUsers .list-cell:selected .label {
+    -fx-text-fill: black;
 }

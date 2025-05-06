@@ -45,6 +45,8 @@ public class AdminController implements Initializable {
     public Label lblCurrentUser;
 
     private UserModel userModel;
+    private User selectedUser;
+
 
     public AdminController() {
         try {
@@ -59,6 +61,15 @@ public class AdminController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         populateUserList();
         lblCurrentUser.setText(SessionManager.getInstance().getCurrentUser().getUsername());
+
+        if (lstUsers.getItems() != null) {
+            lstUsers.getSelectionModel().select(0);
+            User user = lstUsers.getSelectionModel().getSelectedItem();
+            setUserInfo(user);
+        }
+        lstUsers.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            setUserInfo(newValue);
+        });
     }
 
     @FXML
@@ -88,13 +99,21 @@ public class AdminController implements Initializable {
         }
     }
 
-
+    private void setUserInfo(User  selectedUser) {
+        if (selectedUser != null) {
+            this.selectedUser = selectedUser;
+            txtUsername.setText(selectedUser.getUsername());
+            txtPassword.setText("*****");
+            txtFirstName.setText(selectedUser.getFirstName());
+            txtLastName.setText(selectedUser.getLastName());
+            txtEmail.setText(selectedUser.getEmail());
+            txtPhone.setText(selectedUser.getPhoneNumber());
+        }
+    }
 
     @FXML
     public void handleDeleteUser(ActionEvent actionEvent) {
     }
-
-
 
     private void populateUserList() {
         ObservableList<User> users = FXCollections.observableArrayList();
