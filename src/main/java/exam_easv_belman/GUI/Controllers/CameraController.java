@@ -223,11 +223,15 @@ public class CameraController implements Initializable {
         Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
             ((PhotoDocController) controller).setOrderNumber(orderNumber);
         });
-        try {
-            strategy.stop();
-        } catch (Exception e) {
-            e.printStackTrace();
-            //TODO alert
+        //shut down the ExecutorService and stop the use of camera
+        if (mainPreviewExecutor != null && !mainPreviewExecutor.isShutdown()) {
+            mainPreviewExecutor.shutdownNow();
+            mainPreviewExecutor = null;
+            try {
+                strategy.stop();
+            } catch (Exception e) {
+                //TODO exception
+            }
         }
     }
 
