@@ -1,5 +1,6 @@
 package exam_easv_belman.GUI.Controllers;
 
+import exam_easv_belman.BLL.util.Gmailer;
 import exam_easv_belman.BLL.util.PdfGeneratorUtil;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
@@ -15,7 +16,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.util.ResourceBundle;
 
 public class SendViewController implements Initializable {
@@ -29,6 +33,8 @@ public class SendViewController implements Initializable {
     @FXML
     private TextField txtComment;
 
+    private Gmailer gMailer;
+
     public void setOrderNumber(String orderNumber) {
         SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
         txtOrderNumber.setText(orderNumber);
@@ -36,6 +42,14 @@ public class SendViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        try {
+            gMailer = new Gmailer();
+        } catch (GeneralSecurityException e) {
+            //todo fix exception handling
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Image img = new Image(getClass().getResourceAsStream("/images/icon-log.png"));
         ImageView imgView = new ImageView(img);
         btnPrev.setGraphic(imgView);
@@ -61,10 +75,17 @@ public class SendViewController implements Initializable {
     }
 
     public void handlePreview(ActionEvent actionEvent) throws Exception {
-        PdfGeneratorUtil.generatePdf("src/main/resources/Images/generatedPDF.pdf", txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText());
+        PdfGeneratorUtil.generatePdf("src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf", txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), true);
     }
 
-    public void handleSend(ActionEvent actionEvent) {
+    public void handleSend(ActionEvent actionEvent) throws Exception {
         //Todo send report using gmailer class like previous project
+        String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf";
+        PdfGeneratorUtil.generatePdf(filePath, txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), false);
+        File generatedPDF = new File(filePath);
+        gMailer.sendMail(txtOrderNumber.getText(), "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: " + txtOrderNumber.getText(), txtEmail.getText(), generatedPDF);
+        System.out.println(generatedPDF.delete());
+
+
     }
 }

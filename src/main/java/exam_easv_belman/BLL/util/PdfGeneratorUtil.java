@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PdfGeneratorUtil {
 
-    public static void generatePdf(String filePath, String email, String comment, String orderNumber) throws Exception {
+    public static void generatePdf(String filePath, String email, String comment, String orderNumber, Boolean delete) throws Exception {
         File file = new File(filePath);
         file.getParentFile().mkdirs();
         PdfWriter writer = new PdfWriter(file);
@@ -62,22 +62,24 @@ public class PdfGeneratorUtil {
             if (Desktop.isDesktopSupported()) {
                 Desktop.getDesktop().open(file);
 
-                ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-                executorService.schedule(() -> {
-                    try {
-                        if (file.exists()) {
-                            boolean deleted = file.delete();
-                            System.out.println("File deleted: " + deleted);
-                            if (!deleted) {
-                                System.out.println("Failed to delete the file: " + filePath);
+                if (delete) {
+                    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+                    executorService.schedule(() -> {
+                        try {
+                            if (file.exists()) {
+                                boolean deleted = file.delete();
+                                System.out.println("File deleted: " + deleted);
+                                if (!deleted) {
+                                    System.out.println("Failed to delete the file: " + filePath);
+                                }
                             }
+                        } catch (Exception e) {
+                            System.err.println("Error deleting file: " + e.getMessage());
+                        } finally {
+                            executorService.shutdown();
                         }
-                    } catch (Exception e) {
-                        System.err.println("Error deleting file: " + e.getMessage());
-                    } finally {
-                        executorService.shutdown();
-                    }
-                }, 1, TimeUnit.SECONDS);
+                    }, 1, TimeUnit.SECONDS);
+                }
             }
         } else {
             throw new Exception("Logo file not found");
