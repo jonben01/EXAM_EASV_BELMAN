@@ -45,7 +45,6 @@ public class Navigator {
         stage = primaryStage;
         goTo(View.LOGIN);
         stage.show();
-
     }
 
     /**
@@ -60,13 +59,8 @@ public class Navigator {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
             Parent root = loader.load();
 
-            // Laver kun en ny scene hvis der er brug for det. ellers bliver der bare direkte sat et nyt root.
-            if (stage.getScene() == null) {
-                stage.setScene(new Scene(root));
-            } else {
-                stage.getScene().setRoot(root);
-            }
-            
+            stage.setScene(new Scene(root));
+
             stage.centerOnScreen();
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,33 +71,49 @@ public class Navigator {
     /**
      * Navigates to the specified view and allows setting the controller with custom data.
      *
-     * @param view The target view to navigate to.
+     * @param view               The target view to navigate to.
      * @param controllerConsumer A function that will be applied to the controller, allowing parameters to be set.
      */
     public void goTo(View view, Consumer<Object> controllerConsumer) {
         try {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(view.getFXML())));
             Parent root = loader.load();
-            
-            // Laver kun en ny scene hvis der er brug for det. ellers bliver der bare direkte sat et nyt root.
+
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            // Get the controller and apply the provided configuration
+            currentController = loader.getController();
+            if (controllerConsumer != null && currentController != null) {
+                controllerConsumer.accept(currentController);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void setRoot(View view, Consumer<Object> controllerConsumer) {
+        try {
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
+            Parent root = loader.load();
+
             if (stage.getScene() == null) {
                 stage.setScene(new Scene(root));
             } else {
                 stage.getScene().setRoot(root);
             }
-            
-            stage.show();
 
-        // Get the controller and apply the provided configuration
-        currentController = loader.getController();
-        if (controllerConsumer != null && currentController != null) {
-            controllerConsumer.accept(currentController);
+            currentController = loader.getController();
+            if (controllerConsumer != null && currentController != null) {
+                controllerConsumer.accept(currentController);
+            }
+
+            stage.centerOnScreen();
+        } catch (IOException e) {
+            //TODO exception or alert
         }
-    } catch (IOException e) {
-        e.printStackTrace();
     }
-}
-
 
     public Object showModal(View view) {
         try {

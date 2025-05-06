@@ -78,7 +78,7 @@ public class OrderController {
 
     private void GoToPhotoDocView(ActionEvent event, String orderNumber){
         try {
-            Navigator.getInstance().goTo(View.PHOTO_DOC, controller -> {
+            Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
                 if (controller instanceof PhotoDocController) {
                     ((PhotoDocController) controller).setOrderNumber(orderNumber);
                 }
@@ -92,7 +92,7 @@ public class OrderController {
 
     private void GoToQCView(ActionEvent event, String orderNumber){
         try {
-            Navigator.getInstance().goTo(View.QCView, controller -> {
+            Navigator.getInstance().setRoot(View.QCView, controller -> {
                 if (controller instanceof QCController) {
                     ((QCController) controller).setOrderNumber(orderNumber);
                 }
