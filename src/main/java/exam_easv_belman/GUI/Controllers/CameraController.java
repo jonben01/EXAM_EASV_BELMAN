@@ -220,7 +220,15 @@ public class CameraController implements Initializable {
 
     @FXML
     public void handleReturn(ActionEvent actionEvent) {
-
+        Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
+            ((PhotoDocController) controller).setOrderNumber(orderNumber);
+        });
+        try {
+            strategy.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+            //TODO alert
+        }
     }
 
     private void openOverlayPreview(int i) {

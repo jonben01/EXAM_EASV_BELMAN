@@ -81,6 +81,7 @@ public class Navigator {
 
             stage.setScene(new Scene(root));
             stage.show();
+            stage.centerOnScreen();
 
             // Get the controller and apply the provided configuration
             currentController = loader.getController();
