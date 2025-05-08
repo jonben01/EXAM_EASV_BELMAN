@@ -20,7 +20,7 @@ public interface IPhotoDataAccess {
 
     ObservableList<Photo> getImagesFromDatabase(String orderNumber) throws SQLException;
 
-    void deleteImageFromDatabase();
+    void deleteImageFromDatabase(Photo photo) throws SQLException;
 
     boolean saveImageAndPath(List<BufferedImage> photos, List<String> fileNames, User uploader, String orderID) throws Exception;
 

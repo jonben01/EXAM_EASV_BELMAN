@@ -3,7 +3,9 @@ package exam_easv_belman.DAL;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.User;
+import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 
 import javax.imageio.ImageIO;
@@ -200,7 +202,22 @@ public class PhotoDAO implements IPhotoDataAccess{
     }
 
     @Override
-    public void deleteImageFromDatabase() {
+    public void deleteImageFromDatabase(Photo photo) throws SQLException {
+        String sql = "DELETE FROM Photos WHERE id = ?";
+        try(Connection conn = dbConnector.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setInt(1, photo.getId());
+            ps.executeUpdate();
+            System.out.println("photo with id " + photo.getId() + " deleted from database.");
+        }
+        catch(SQLServerException e){
+            throw new SQLException(e);
+        }
 
+        try{
+            Files.deleteIfExists(Paths.get(photo.getFilepath()));
+        } catch (IOException e) {
+            //TODO Burde nok smide et eller andet.. kører bare runtime for nu.
+            throw new RuntimeException(e);
+        }
     }
 }

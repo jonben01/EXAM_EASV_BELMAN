@@ -127,7 +127,7 @@ private void handleImageClick(Photo photo) {
     try {
         System.out.println("You have clicked on an image.");
         //TODO implement this.
-        //Navigator.getInstance().goTo(View.IMG_VIEW, photo);
+        Navigator.getInstance().goTo(View.IMG_VIEW, photo);
     } catch (Exception e) {
         e.printStackTrace();
     }

@@ -1,5 +1,7 @@
 package exam_easv_belman.GUI;
 
+import exam_easv_belman.BE.Photo;
+import exam_easv_belman.GUI.Controllers.ImageController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -59,6 +61,26 @@ public class Navigator {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
             Parent root = loader.load();
 
+            stage.setScene(new Scene(root));
+
+            stage.centerOnScreen();
+        } catch (IOException e) {
+            e.printStackTrace();
+            //TODO AlertClass.alert SOMETHING or rather send the exception up as an Exception or custom one
+        }
+    }
+    public void goTo(View view, Photo photo) {
+        try {
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
+            Parent root = loader.load();
+            currentController = loader.getController();
+
+            if(currentController instanceof ImageController){
+                ((ImageController) currentController).setImage(photo);
+            }
+
+            stage.setMinHeight(460);
+            stage.setMinWidth(754);
             stage.setScene(new Scene(root));
 
             stage.centerOnScreen();
@@ -140,6 +162,4 @@ public class Navigator {
     public Object getCurrentController() {
         return currentController;
     }
-
-
 }

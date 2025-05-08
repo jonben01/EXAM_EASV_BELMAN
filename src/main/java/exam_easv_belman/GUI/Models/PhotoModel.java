@@ -6,6 +6,7 @@ import exam_easv_belman.BLL.PhotoManager;
 import javafx.collections.ObservableList;
 
 import java.awt.image.BufferedImage;
+import java.sql.SQLException;
 import java.util.List;
 
 public class PhotoModel {
@@ -27,5 +28,9 @@ public class PhotoModel {
     }
     public ObservableList<Photo> getImagesFromDatabase(String orderNumber) throws Exception {
         return photoManager.getImagesFromDatabase(orderNumber);
+    }
+
+    public void deleteImage(Photo photo) throws SQLException {
+        photoManager.deleteImage(photo);
     }
 }

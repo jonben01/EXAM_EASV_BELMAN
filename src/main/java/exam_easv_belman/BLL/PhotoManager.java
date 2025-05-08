@@ -31,4 +31,8 @@ public class PhotoManager {
     public ObservableList<Photo> getImagesFromDatabase(String orderNumber) throws SQLException {
         return photoDataAccess.getImagesFromDatabase(orderNumber);
     }
+
+    public void deleteImage(Photo photo) throws SQLException {
+        photoDataAccess.deleteImageFromDatabase(photo);
+    }
 }
