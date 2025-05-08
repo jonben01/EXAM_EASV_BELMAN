@@ -14,8 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<VBox xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.QCController" stylesheets="@../css/general.css">
+<VBox stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.QCController">
    <children>
       <HBox prefHeight="43.0" prefWidth="540.0">
          <children>
@@ -34,6 +33,11 @@
                     <Button fx:id="btnPrev" mnemonicParsing="false" onAction="#handleReturn" styleClass="side-button" stylesheets="@../css/general.css" StackPane.alignment="CENTER_RIGHT">
                      <StackPane.margin>
                         <Insets right="10.0" />
+                     </StackPane.margin>
+                  </Button>
+                  <Button fx:id="btnOrder" mnemonicParsing="false" onAction="#handleOrder" text="ORDER">
+                     <StackPane.margin>
+                        <Insets left="270.0" />
                      </StackPane.margin>
                   </Button>
                </children>

@@ -1,6 +1,8 @@
 package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BE.Photo;
+import exam_easv_belman.BE.Role;
+import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
@@ -42,6 +44,8 @@ public class PhotoDocController {
     private GridPane gridPhoto;
     
     private PhotoModel photoModel;
+    @FXML
+    private Button btnQC;
 
 
     @FXML
@@ -54,6 +58,13 @@ public class PhotoDocController {
         ObservableList<Photo> imagesFromDatabase = photoModel.getImagesFromDatabase(orderNumber);
         fillPhotoGrid(imagesFromDatabase);
         System.out.println("has gotten " + imagesFromDatabase.size() + " images from database" );
+
+        User currentUser = SessionManager.getInstance().getCurrentUser();
+        if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
+            btnQC.setVisible(true);
+        } else {
+            btnQC.setVisible(false);
+        }
     }
 
 private void fillPhotoGrid(ObservableList<Photo> imagesFromDatabase) {
@@ -169,5 +180,15 @@ private void handleImageClick(Photo photo) {
 
 
     }
+
+    public void handleQC(ActionEvent actionEvent){
+        try {
+            Navigator.getInstance().goTo(View.QCView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }

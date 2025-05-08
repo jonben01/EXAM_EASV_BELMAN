@@ -51,7 +51,8 @@ public class LoginController implements Initializable {
             User user = userModel.authenticateUser(username, rawPassword);
             SessionManager.getInstance().setCurrentUser(user);
 
-            Navigator.getInstance().goTo(user.getRole() == Role.ADMIN ? View.ADMIN : View.ORDER);
+            //Navigator.getInstance().goTo(user.getRole() == Role.ADMIN ? View.ADMIN : View.ORDER);
+            Navigator.getInstance().goTo(View.ORDER);
 
             //TODO implement some sort of visual indicator when something fails, red outline or maybe a text (not popup
 

@@ -31,6 +31,9 @@ public class OrderController {
     private Button btnSearch;
     @FXML
     private Button btnLogOut;
+    @FXML
+    private Button btnUser;
+
 
     @FXML
     private void initialize() {
@@ -40,6 +43,14 @@ public class OrderController {
         img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-log.png")));
         imgView = new ImageView(img);
         btnLogOut.setGraphic(imgView);
+
+        User currentUser = SessionManager.getInstance().getCurrentUser();
+        if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
+            btnUser.setVisible(true);
+        } else {
+            btnUser.setVisible(false);
+        }
+
 
     }
 
@@ -105,5 +116,13 @@ public class OrderController {
 
     }
 
+    public void handleUserManagement(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.ADMIN);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
+

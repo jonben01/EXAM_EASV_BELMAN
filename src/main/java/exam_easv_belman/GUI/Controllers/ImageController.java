@@ -1,6 +1,8 @@
 package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BE.Photo;
+import exam_easv_belman.BE.Role;
+import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
@@ -47,6 +49,8 @@ public class ImageController implements Initializable {
     @FXML
     private Button btnConfirm;
     private PhotoModel photoModel;
+    @FXML
+    private Button btnQC;
 
     public void setImage(Photo photo) {
         this.photo = photo;
@@ -78,6 +82,14 @@ public class ImageController implements Initializable {
 
         setButtonGraphic(btnDelete, "/images/icon-trash.png");
         setButtonGraphic(btnConfirm, "/images/icon-check.png");
+
+        User currentUser = SessionManager.getInstance().getCurrentUser();
+        if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
+            btnQC.setVisible(true);
+        } else {
+            btnQC.setVisible(false);
+        }
+
     }
 
     @FXML
@@ -145,5 +157,6 @@ public class ImageController implements Initializable {
 
         button.setGraphic(imgView);
     }
+
 
 }

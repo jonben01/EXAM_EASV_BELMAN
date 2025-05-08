@@ -1,5 +1,7 @@
 package exam_easv_belman.GUI.Controllers;
 
+import exam_easv_belman.BE.Role;
+import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
@@ -22,6 +24,8 @@ public class QCController implements Initializable {
     private Text txtOrderNumber;
     @FXML
     private Button btnPrev;
+    @FXML
+    private Button btnOrder;
 
     public void setOrderNumber(String orderNumber) {
         txtOrderNumber.setText(orderNumber);
@@ -32,6 +36,13 @@ public class QCController implements Initializable {
     Image img = new Image(getClass().getResourceAsStream("/images/icon-log.png"));
     ImageView imgView = new ImageView(img);
     btnPrev.setGraphic(imgView);
+
+        User currentUser = SessionManager.getInstance().getCurrentUser();
+        if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
+            btnOrder.setVisible(true);
+        } else {
+            btnOrder.setVisible(false);
+        }
     }
 
 
@@ -72,4 +83,11 @@ public class QCController implements Initializable {
 
     }
 
+    public void handleOrder(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.ORDER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
