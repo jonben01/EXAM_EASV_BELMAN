@@ -25,14 +25,18 @@ public class PhotoManager {
     public boolean saveImageAndPath(List<BufferedImage> images,
                                     List<String> fileNames,
                                     User uploader,
-                                    String orderID) throws Exception {
-        return photoDataAccess.saveImageAndPath(images, fileNames, uploader, orderID);
+                                    String productNumber) throws Exception {
+        return photoDataAccess.saveImageAndPath(images, fileNames, uploader, productNumber);
     }
-    public ObservableList<Photo> getImagesFromDatabase(String orderNumber) throws SQLException {
-        return photoDataAccess.getImagesFromDatabase(orderNumber);
+    public ObservableList<Photo> getImagesForOrder(String orderNumber) throws SQLException {
+        return photoDataAccess.getImagesForOrder(orderNumber);
     }
 
     public void deleteImage(Photo photo) throws SQLException {
         photoDataAccess.deleteImageFromDatabase(photo);
+    }
+
+    public ObservableList<Photo> getImagesForProduct(String productNumber) throws SQLException {
+        return photoDataAccess.getImagesForProduct(productNumber);
     }
 }

@@ -2,6 +2,7 @@ package exam_easv_belman.DAL;
 
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import exam_easv_belman.BE.Photo;
+import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.ObservableList;
@@ -42,7 +43,7 @@ public class PhotoDAO implements IPhotoDataAccess{
     public boolean saveImageAndPath(List<BufferedImage> photos,
                                     List<String> fileNames,
                                     User uploader,
-                                    String orderID) throws Exception {
+                                    String productNumber) throws Exception {
 
         //check if the lists are of the same size, if not throw an exception.
         if (photos.size() != fileNames.size()) {
@@ -55,10 +56,10 @@ public class PhotoDAO implements IPhotoDataAccess{
             connection = dbConnector.getConnection();
             connection.setAutoCommit(false);
 
-            Path orderFolderPath = baseRelativePath.resolve(orderID + "_Images");
+            Path orderFolderPath = baseRelativePath.resolve(productNumber + "_Images");
             persistedPaths = saveImages(photos, fileNames, orderFolderPath);
 
-            insertImagePathToDatabase(connection, persistedPaths, uploader, orderID);
+            insertImagePathToDatabase(connection, persistedPaths, uploader, getProductFromNumber(productNumber));
 
             connection.commit();
             return true;
@@ -161,13 +162,13 @@ public class PhotoDAO implements IPhotoDataAccess{
     public void insertImagePathToDatabase(Connection connection,
                                           List<Path> filePaths,
                                           User uploader,
-                                          String orderID) throws SQLException {
+                                          Product product) throws SQLException {
 
-        String sql = "INSERT INTO Photos (order_number, file_path, uploaded_by, uploaded_at) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Photos (product_id, file_path, uploaded_by, uploaded_at) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             for (Path path : filePaths) {
-                statement.setString(1, orderID);
+                statement.setInt(1, product.getId());
                 statement.setString(2, path.toString());
                 statement.setInt(3, uploader.getId());
                 statement.setObject(4, LocalDateTime.now());
@@ -178,19 +179,20 @@ public class PhotoDAO implements IPhotoDataAccess{
     }
 
     @Override
-    public ObservableList<Photo> getImagesFromDatabase(String orderNumber) throws SQLException {
+    public ObservableList<Photo> getImagesForProduct(String productNumber) throws SQLException {
         ObservableList<Photo> photos = javafx.collections.FXCollections.observableArrayList();
-        String sql = "SELECT * FROM Photos WHERE order_number = ?";
+        String sql = "SELECT p.* FROM Photos p INNER JOIN Products pr ON p.product_id = pr.id WHERE pr.products_order_number = ?";
+
 
         try(Connection conn = dbConnector.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)){
-            ps.setString(1, orderNumber);
+            ps.setString(1, productNumber);
 
             ResultSet rs = ps.executeQuery();
             while(rs.next())
             {
                 Photo tempImg = new Photo();
                 tempImg.setId(rs.getInt("id"));
-                tempImg.setOrderNumber(rs.getString("order_Number"));
+                tempImg.setOrderNumber(rs.getString("product_id"));
                 tempImg.setFilepath(rs.getString("file_path"));
                 tempImg.setUploadedBy(rs.getInt("uploaded_by"));
                 tempImg.setUploadTime(rs.getObject("uploaded_at", LocalDateTime.class));
@@ -199,6 +201,29 @@ public class PhotoDAO implements IPhotoDataAccess{
             System.out.println("length:" + photos.size());
             return photos;
         }
+    }
+
+    @Override
+    public ObservableList<Photo> getImagesForOrder(String orderNumber) throws SQLException {
+        //todo: make this??
+        return null;
+    }
+
+    @Override
+    public Product getProductFromNumber(String productNumber) throws SQLException {
+        Product product = new Product();
+        String sql = "SELECT * FROM Products WHERE products_order_number = ?";
+        try(Connection conn = dbConnector.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, productNumber);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                product.setId(rs.getInt("id"));
+                product.setOrder_id(rs.getInt("order_id"));
+                product.setProduct_number(rs.getString("products_order_number"));
+            }
+            return product;
+        }
+
     }
 
     @Override

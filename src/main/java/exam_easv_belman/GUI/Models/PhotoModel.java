@@ -23,11 +23,14 @@ public class PhotoModel {
     public boolean saveImageAndPath(List<BufferedImage> images,
                                     List<String> fileNames,
                                     User uploader,
-                                    String orderID) throws Exception {
-        return photoManager.saveImageAndPath(images, fileNames, uploader, orderID);
+                                    String productNumber) throws Exception {
+        return photoManager.saveImageAndPath(images, fileNames, uploader, productNumber);
     }
-    public ObservableList<Photo> getImagesFromDatabase(String orderNumber) throws Exception {
-        return photoManager.getImagesFromDatabase(orderNumber);
+    public ObservableList<Photo> getImagesForOrder(String orderNumber) throws Exception {
+        return photoManager.getImagesForOrder(orderNumber);
+    }
+    public ObservableList<Photo> getImagesForProduct(String productNumber) throws Exception {
+        return photoManager.getImagesForProduct(productNumber);
     }
 
     public void deleteImage(Photo photo) throws SQLException {

@@ -33,11 +33,14 @@ public class PhotoDocController {
     @FXML
     public Button btnOpenCamera;
     @FXML
-    private Text txtOrderNumber;
+    private Text txtOrderNumber; // THIS CAN ALSO HOLD THE PRODUCT NUMBER, IF USER CHOOSES SO
     @FXML
     private Button btnPrev;
 
     private String orderNumber;
+
+
+    private boolean isProduct;
     @FXML
     private GridPane gridPhoto;
 
@@ -61,8 +64,6 @@ public class PhotoDocController {
         Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-log.png")));
         ImageView imgView = new ImageView(img);
         btnPrev.setGraphic(imgView);
-        imagesFromDatabase = photoModel.getImagesFromDatabase(orderNumber);
-        System.out.println("has gotten " + imagesFromDatabase.size() + " images from database" );
 
         User currentUser = SessionManager.getInstance().getCurrentUser();
         if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
@@ -70,19 +71,44 @@ public class PhotoDocController {
         } else {
             btnQC.setVisible(false);
         }
-
-        int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
-        pagination.setPageCount(pageCount);
-        pagination.setPageFactory(this::fillPhotoGrid);
-
-
     }
 
 private Node fillPhotoGrid(int pageIndex) {
-        int startIndex = pageIndex * MAX_PHOTOS;
-        int endIndex = Math.min(startIndex + MAX_PHOTOS, imagesFromDatabase.size());
     gridPhoto.getChildren().clear();
+    if (!isProduct) {
+        Label noImagesLabel = new Label("Switch to a product to see images");
+        noImagesLabel.getStylesheets().add("/css/general.css");
+        noImagesLabel.getStyleClass().add("label-image");
+        noImagesLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #666666;");
 
+        // Center the label in the GridPane
+        GridPane.setHalignment(noImagesLabel, HPos.CENTER);
+        GridPane.setValignment(noImagesLabel, VPos.CENTER);
+        GridPane.setColumnSpan(noImagesLabel, 2);
+        GridPane.setRowSpan(noImagesLabel, 3);
+
+        gridPhoto.add(noImagesLabel, 0, 0);
+        return photoGridContainer;
+    }
+    if(imagesFromDatabase.size() == 0)
+    {
+        Label noImagesLabel = new Label("This product has no images yet");
+        noImagesLabel.getStylesheets().add("/css/general.css");
+        noImagesLabel.getStyleClass().add("label-image");
+        noImagesLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #666666;");
+
+        // Center the label in the GridPane
+        GridPane.setHalignment(noImagesLabel, HPos.CENTER);
+        GridPane.setValignment(noImagesLabel, VPos.CENTER);
+        GridPane.setColumnSpan(noImagesLabel, 2);
+        GridPane.setRowSpan(noImagesLabel, 3);
+
+        gridPhoto.add(noImagesLabel, 0, 0);
+        return photoGridContainer;
+    }
+
+    int startIndex = pageIndex * MAX_PHOTOS;
+    int endIndex = Math.min(startIndex + MAX_PHOTOS, imagesFromDatabase.size());
     int column = 0;
     int row = 0;
 
@@ -146,26 +172,62 @@ private void updateImageSizes() {
 }
 private void handleImageClick(Photo photo) {
     try {
-        System.out.println("You have clicked on an image.");
-        //TODO implement this.
-        Navigator.getInstance().goTo(View.IMG_VIEW, photo);
-    } catch (Exception e) {
-        e.printStackTrace();
+        Navigator.getInstance().setRoot(View.IMG_VIEW, controller -> {
+            System.out.println(controller);
+            if (controller instanceof ImageController) {
+                ((ImageController) controller).setImage(photo);
+                if(!isProduct) {
+                    try {
+                        ((ImageController) controller).setOrderNumber(txtOrderNumber.getText(), false);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                else if(isProduct)
+                {
+                    try {
+                        ((ImageController) controller).setOrderNumber(txtOrderNumber.getText(), true);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
     }
-}
+    catch (Exception e) {
+        e.printStackTrace();
+        AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+    }
+    }
 
-    public void setOrderNumber(String orderNumber) {
+    public void setOrderNumber(String orderNumber) throws Exception {
         SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
+        isProduct = false;
         txtOrderNumber.setText(orderNumber);
         this.orderNumber = orderNumber;
+        btnOpenCamera.setDisable(true);
+        int pageCount = 1;
+        pagination.setPageCount(pageCount);
+        pagination.setPageFactory(this::fillPhotoGrid);
+    }
+    public void setProductNumber(String productNumber) throws Exception {
+        isProduct = true;
+        txtOrderNumber.setText(productNumber);
+        this.orderNumber = SessionManager.getInstance().getCurrentOrderNumber();
+        isProduct = true;
+        imagesFromDatabase = photoModel.getImagesForProduct(txtOrderNumber.getText());
+
+        int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
+        pagination.setPageCount(pageCount);
+        pagination.setPageFactory(this::fillPhotoGrid);
     }
 
     public void handleCamera(ActionEvent actionEvent) {
-        String orderNumber = txtOrderNumber.getText();
+        String productNumber = txtOrderNumber.getText();
 
         Navigator.getInstance().goTo(View.CAMERA, controller -> {
             if (controller instanceof CameraController) {
-                ((CameraController) controller).setOrderNumber(orderNumber);
+                ((CameraController) controller).setProductNumber(productNumber);
             }
         });
 
@@ -198,7 +260,4 @@ private void handleImageClick(Photo photo) {
             e.printStackTrace();
         }
     }
-
-
-
 }

@@ -30,6 +30,8 @@ public class QCController implements Initializable {
     public void setOrderNumber(String orderNumber) {
         txtOrderNumber.setText(orderNumber);
     }
+    public void setProductNumber(String productNumber) {txtOrderNumber.setText(productNumber);}
+    //TODO remember to use product number properly.
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

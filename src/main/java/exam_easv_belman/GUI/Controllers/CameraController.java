@@ -63,15 +63,15 @@ public class CameraController implements Initializable {
     private final ArrayDeque<Image> gallery = new ArrayDeque<>();
     private PhotoModel photoModel;
     private List<BufferedImage> imagesToSave = new ArrayList<>();
-    private String orderNumber;
+    private String productNumber;
     private int currentPreviewIndex = -1;
 
     public CameraController() {
         photoModel = new PhotoModel();
     }
 
-    public void setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
+    public void setProductNumber(String productNumber) {
+        this.productNumber = productNumber;
     }
 
     @Override
@@ -195,7 +195,7 @@ public class CameraController implements Initializable {
         }
         User currentUser = SessionManager.getInstance().getCurrentUser();
         try {
-            photoModel.saveImageAndPath(imagesToSave, fileNames, currentUser, orderNumber);
+            photoModel.saveImageAndPath(imagesToSave, fileNames, currentUser, productNumber);
         } catch (Exception e) {
             e.printStackTrace();
             //TODO alert
@@ -213,7 +213,11 @@ public class CameraController implements Initializable {
 
         Navigator.getInstance().goTo(View.PHOTO_DOC, controller -> {
             if (controller instanceof PhotoDocController pDC) {
-                pDC.setOrderNumber(orderNumber);
+                try {
+                    pDC.setProductNumber(productNumber);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
@@ -221,7 +225,11 @@ public class CameraController implements Initializable {
     @FXML
     public void handleReturn(ActionEvent actionEvent) {
         Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
-            ((PhotoDocController) controller).setOrderNumber(orderNumber);
+            try {
+                ((PhotoDocController) controller).setProductNumber(productNumber);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
         //shut down the ExecutorService and stop the use of camera
         if (mainPreviewExecutor != null && !mainPreviewExecutor.isShutdown()) {

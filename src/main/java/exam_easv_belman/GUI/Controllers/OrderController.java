@@ -27,6 +27,7 @@ public class OrderController {
 
     //TODO take orders from db not just these hardcoded values
     private final List<String> orders = Arrays.asList("1001", "1002", "1003", "ORD-1001");
+    private List<String> products = Arrays.asList("ORD-1001-001", "ORD-1001-002");
     @FXML
     private Button btnSearch;
     @FXML
@@ -60,23 +61,39 @@ public class OrderController {
         String inputOrderNumber = OrderNumber.getText();
 
         if (inputOrderNumber.isEmpty()) {
-            AlertHelper.showAlert("Error", "Please enter an order number", Alert.AlertType.ERROR);
+            AlertHelper.showAlert("Error", "Please enter an order/product number", Alert.AlertType.ERROR);
             return;
         }
 
-        if (!orders.contains(inputOrderNumber)) {
-            AlertHelper.showAlert("Error", "The Order Number Entered Does Not Exist", Alert.AlertType.ERROR);
+        if (!orders.contains(inputOrderNumber) && !products.contains(inputOrderNumber)) {
+
+            AlertHelper.showAlert("Error", "The order/product number entered does not exist", Alert.AlertType.ERROR);
             return;
         }
 
-        SessionManager.getInstance().setCurrentOrderNumber(inputOrderNumber);
+        int dashCount = inputOrderNumber.length() - inputOrderNumber.replace("-", "").length();
 
-        User currentUser = SessionManager.getInstance().getCurrentUser();
+        if(dashCount == 1) {
+            SessionManager.getInstance().setCurrentOrderNumber(inputOrderNumber);
 
-        if (currentUser != null && currentUser.getRole() == Role.QC){
-            GoToQCView(event, inputOrderNumber);
-        } else {
-            GoToPhotoDocView(event, inputOrderNumber);
+            User currentUser = SessionManager.getInstance().getCurrentUser();
+
+            if (currentUser != null && currentUser.getRole() == Role.QC) {
+                GoToQCView(event, inputOrderNumber, false);
+            } else {
+                GoToPhotoDocView(event, inputOrderNumber, false);
+            }
+        }
+        if(dashCount == 2) {
+            String orderNumber = inputOrderNumber.substring(0, inputOrderNumber.lastIndexOf("-"));
+            SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
+            User currentUser = SessionManager.getInstance().getCurrentUser();
+
+            if (currentUser != null && currentUser.getRole() == Role.QC) {
+                GoToQCView(event, inputOrderNumber,true);
+            } else {
+                GoToPhotoDocView(event, inputOrderNumber, true);
+            }
         }
 
     }
@@ -87,11 +104,26 @@ public class OrderController {
 
     }
 
-    private void GoToPhotoDocView(ActionEvent event, String orderNumber){
+    private void GoToPhotoDocView(ActionEvent event, String orderNumber, boolean IsProduct ){
         try {
             Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
+                System.out.println(controller);
                 if (controller instanceof PhotoDocController) {
-                    ((PhotoDocController) controller).setOrderNumber(orderNumber);
+                    if(!IsProduct) {
+                        try {
+                            ((PhotoDocController) controller).setOrderNumber(orderNumber);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else if(IsProduct)
+                    {
+                        try {
+                            ((PhotoDocController) controller).setProductNumber(orderNumber);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
             });
         } catch (Exception e) {
@@ -101,11 +133,17 @@ public class OrderController {
 
     }
 
-    private void GoToQCView(ActionEvent event, String orderNumber){
+    private void GoToQCView(ActionEvent event, String orderNumber, boolean IsProduct){
         try {
             Navigator.getInstance().setRoot(View.QCView, controller -> {
                 if (controller instanceof QCController) {
-                    ((QCController) controller).setOrderNumber(orderNumber);
+                    if(!IsProduct) {
+                        ((QCController) controller).setOrderNumber(orderNumber);
+
+                    }
+                    else if(IsProduct) {
+                        ((QCController) controller).setProductNumber(orderNumber);
+                    }
                 }
             });
             } catch (Exception e) {

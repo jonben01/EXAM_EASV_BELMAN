@@ -38,6 +38,7 @@ public class ImageController implements Initializable {
 
     private double sidebarSize = 0.1;
     private double buttonSize = 0.7;
+    private boolean isProduct;
     @FXML
     private Button btnPrev;
     @FXML
@@ -78,7 +79,6 @@ public class ImageController implements Initializable {
         img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-back.png")));
         imgView = new ImageView(img);
         btnPrev.setGraphic(imgView);
-        txtOrderNumber.setText(SessionManager.getInstance().getCurrentOrderNumber());
 
         setButtonGraphic(btnDelete, "/images/icon-trash.png");
         setButtonGraphic(btnConfirm, "/images/icon-check.png");
@@ -90,7 +90,17 @@ public class ImageController implements Initializable {
         try {
             Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
                 if (controller instanceof PhotoDocController) {
-                    ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                    try {
+                        if(!isProduct) {
+                            ((PhotoDocController) controller).setOrderNumber(txtOrderNumber.getText());
+                        }
+                        else
+                        {
+                            ((PhotoDocController) controller).setProductNumber(txtOrderNumber.getText());
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
         } catch (Exception e) {
@@ -113,24 +123,16 @@ public class ImageController implements Initializable {
     }
 
     @FXML
-    private void handleDelete(ActionEvent actionEvent) throws SQLException {
-        try{
-            AlertHelper.showConfirmationAlert("Delete this photo?", "Are you sure you wish to delete this photo?", () -> {
-                try {
-                    photoModel.deleteImage(photo);
-                    Navigator.getInstance().goTo(View.PHOTO_DOC, controller -> {
-                        if (controller instanceof PhotoDocController) {
-                            ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (Exception e) {
-            AlertHelper.showAlert("Error", "Failed to delete photo", Alert.AlertType.ERROR);
-        }
-
+    private void handleDelete(ActionEvent actionEvent) {
+        AlertHelper.showConfirmationAlert("Delete this photo?", "Are you sure you wish to delete this photo?", () -> {
+            try {
+                photoModel.deleteImage(photo);
+                handleReturn(actionEvent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                AlertHelper.showAlert("Error", "Failed to delete photo", Alert.AlertType.ERROR);
+            }
+        });
     }
 
     @FXML
@@ -143,13 +145,16 @@ public class ImageController implements Initializable {
         ImageView imgView = new ImageView(img);
         button.setMaxSize(60,60);
 
-        // Bind the ImageView size to its button
-        imgView.fitWidthProperty().bind(button.widthProperty().multiply(0.6));  // 60% of button width
-        imgView.fitHeightProperty().bind(button.heightProperty().multiply(0.6)); // 60% of button height
+        imgView.fitWidthProperty().bind(button.widthProperty().multiply(0.6));
+        imgView.fitHeightProperty().bind(button.heightProperty().multiply(0.6));
         imgView.setPreserveRatio(true);
 
         button.setGraphic(imgView);
     }
 
 
+    public void setOrderNumber(String orderNumber, boolean isProduct) throws Exception {
+        txtOrderNumber.setText(orderNumber);
+        this.isProduct = isProduct;
+    }
 }

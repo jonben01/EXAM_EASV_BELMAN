@@ -74,7 +74,7 @@
             <HBox alignment="BOTTOM_CENTER" fillHeight="false" maxHeight="36.0" maxWidth="1.7976931348623157E308" prefHeight="36.0" prefWidth="675.0" BorderPane.alignment="CENTER">
                <children>
                   <Region prefHeight="51.0" prefWidth="192.0" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" onAction="#handleCamera" prefHeight="51.0" prefWidth="55.0" text="📷">
+                  <Button fx:id="btnOpenCamera" mnemonicParsing="false" onAction="#handleCamera" prefHeight="51.0" prefWidth="55.0" text="📷">
                      <font>
                         <Font size="21.0" />
                      </font>
