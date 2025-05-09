@@ -83,13 +83,6 @@ public class ImageController implements Initializable {
         setButtonGraphic(btnDelete, "/images/icon-trash.png");
         setButtonGraphic(btnConfirm, "/images/icon-check.png");
 
-        User currentUser = SessionManager.getInstance().getCurrentUser();
-        if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
-            btnQC.setVisible(true);
-        } else {
-            btnQC.setVisible(false);
-        }
-
     }
 
     @FXML

@@ -13,10 +13,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -42,10 +40,18 @@ public class PhotoDocController {
     private String orderNumber;
     @FXML
     private GridPane gridPhoto;
-    
+
     private PhotoModel photoModel;
     @FXML
     private Button btnQC;
+
+    private static final int MAX_PHOTOS = 6;
+
+    private ObservableList<Photo> imagesFromDatabase;
+    @FXML
+    private Pagination pagination;
+    @FXML
+    private StackPane photoGridContainer;
 
 
     @FXML
@@ -55,8 +61,7 @@ public class PhotoDocController {
         Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-log.png")));
         ImageView imgView = new ImageView(img);
         btnPrev.setGraphic(imgView);
-        ObservableList<Photo> imagesFromDatabase = photoModel.getImagesFromDatabase(orderNumber);
-        fillPhotoGrid(imagesFromDatabase);
+        imagesFromDatabase = photoModel.getImagesFromDatabase(orderNumber);
         System.out.println("has gotten " + imagesFromDatabase.size() + " images from database" );
 
         User currentUser = SessionManager.getInstance().getCurrentUser();
@@ -65,21 +70,26 @@ public class PhotoDocController {
         } else {
             btnQC.setVisible(false);
         }
+
+        int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
+        pagination.setPageCount(pageCount);
+        pagination.setPageFactory(this::fillPhotoGrid);
+
+
     }
 
-private void fillPhotoGrid(ObservableList<Photo> imagesFromDatabase) {
+private Node fillPhotoGrid(int pageIndex) {
+        int startIndex = pageIndex * MAX_PHOTOS;
+        int endIndex = Math.min(startIndex + MAX_PHOTOS, imagesFromDatabase.size());
     gridPhoto.getChildren().clear();
 
     int column = 0;
     int row = 0;
-    int counter = 0;
 
     gridPhoto.widthProperty().addListener((obs, oldVal, newVal) -> updateImageSizes());
     gridPhoto.heightProperty().addListener((obs, oldVal, newVal) -> updateImageSizes());
-    for (Photo photo : imagesFromDatabase) {
-        counter++;
-        //TODO Temporary fix. Need to add multiple pages.
-        if(counter <= 6) {
+    for (int i = startIndex; i < endIndex && i < imagesFromDatabase.size(); i++) {
+        Photo photo = imagesFromDatabase.get(i);
             try {
                 ImageView imageView = new ImageView();
                 if (Files.exists(Path.of(photo.getFilepath()))) {
@@ -121,8 +131,8 @@ private void fillPhotoGrid(ObservableList<Photo> imagesFromDatabase) {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
     }
+    return photoGridContainer;
 }
 
 private void updateImageSizes() {

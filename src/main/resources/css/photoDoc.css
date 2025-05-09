@@ -1,0 +1,32 @@
+.pagination {
+    -fx-page-information-visible: true;
+}
+
+.pagination .pagination-control .button {
+    -fx-background-color: #004B88;
+    -fx-min-width: 35;
+    -fx-min-height: 35;
+    -fx-font-size: 16;
+    -fx-border-radius: 2;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 5, 0.0, 0, 1);
+}
+
+.pagination .pagination-control .number-button {
+    -fx-background-color: #c1c1c1;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+    -fx-font-size: 16;
+}
+
+.pagination .pagination-control .number-button:selected {
+    -fx-text-fill: white;
+    -fx-background-color: #004B88;
+}
+
+.pagination .pagination-control .number-button:hover {
+    -fx-background-color: #004B88;
+    -fx-text-fill: white; 
+    -fx-cursor: hand;
+}
+
