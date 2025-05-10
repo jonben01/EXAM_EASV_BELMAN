@@ -16,6 +16,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class PdfPreviewUtil {
 
@@ -24,7 +25,7 @@ public class PdfPreviewUtil {
         PDFRenderer pdfRenderer = new PDFRenderer(document);
 
         VBox imageContainer = new VBox(10);
-        imageContainer.setStyle("-fx-background-color: white, - fx-padding: 10;");
+        imageContainer.setStyle("-fx-background-color: #c1c1c1, - fx-padding: 10;");
 
 
         for (int page = 0; page < document.getNumberOfPages(); page++) {
@@ -41,16 +42,20 @@ public class PdfPreviewUtil {
         scrollPane.setFitToWidth(true);
 
         Stage previewStage = new Stage();
-        previewStage.initStyle(StageStyle.UNDECORATED);
+        previewStage.initStyle(StageStyle.DECORATED);
         previewStage.initOwner(ownerStage);
-        previewStage.initModality(Modality.NONE);
-        previewStage.setScene(new Scene(scrollPane, 640, 800));
+        previewStage.initModality(Modality.NONE);;
+
+        previewStage.setScene(new Scene(scrollPane, 615, 800));
+        previewStage.setTitle("PDF Preview");
+        Image icon = new Image(Objects.requireNonNull(PdfPreviewUtil.class.getResourceAsStream("/Images/BELMAN_Logo_264pxl.png"))); // get a better picture
+        previewStage.getIcons().add(icon);
+
         previewStage.show();
 
         ownerStage.getScene().addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
             if (previewStage.isShowing()){
                 previewStage.close();
-
             }
         });
 

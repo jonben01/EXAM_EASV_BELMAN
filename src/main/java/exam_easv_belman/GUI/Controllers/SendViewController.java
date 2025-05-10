@@ -84,7 +84,6 @@ public class SendViewController implements Initializable {
 
 
     public void handleSend(ActionEvent actionEvent) throws Exception {
-        //Todo send report using gmailer class like previous project
         /*
         String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf";
         PdfGeneratorUtil.generatePdf(filePath, txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), false);
