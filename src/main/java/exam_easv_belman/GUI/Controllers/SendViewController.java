@@ -16,6 +16,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
+import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -75,16 +77,33 @@ public class SendViewController implements Initializable {
     }
 
     public void handlePreview(ActionEvent actionEvent) throws Exception {
-        PdfGeneratorUtil.generatePdf("src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf", txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), true);
+        File pdfFile = new File("src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf");
+        Stage stage = (Stage) txtOrderNumber.getScene().getWindow(); // Get current stage
+        PdfGeneratorUtil.generatePdf(pdfFile.getAbsolutePath(), txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), true, stage);
     }
+
 
     public void handleSend(ActionEvent actionEvent) throws Exception {
         //Todo send report using gmailer class like previous project
+        /*
         String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf";
         PdfGeneratorUtil.generatePdf(filePath, txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), false);
         File generatedPDF = new File(filePath);
         gMailer.sendMail(txtOrderNumber.getText(), "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: " + txtOrderNumber.getText(), txtEmail.getText(), generatedPDF);
         System.out.println(generatedPDF.delete());
+        */
+
+        String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf";
+        File generatedPDF = new File(filePath);
+
+        Stage stage = (Stage) txtOrderNumber.getScene().getWindow();
+
+        PdfGeneratorUtil.generatePdf(filePath, txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), false, stage);
+
+        gMailer.sendMail(txtOrderNumber.getText(), "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: " + txtOrderNumber.getText(),txtEmail.getText(), generatedPDF);
+
+        boolean deleted = generatedPDF.delete();
+        System.out.println("File deleted: " + deleted);
 
 
     }

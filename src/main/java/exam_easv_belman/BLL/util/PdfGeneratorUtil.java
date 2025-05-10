@@ -18,15 +18,19 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.element.Paragraph;
 
+import javafx.stage.Stage;
+import java.io.IOException;
+
 import java.awt.Desktop;
 import java.io.File;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class PdfGeneratorUtil {
 
-    public static void generatePdf(String filePath, String email, String comment, String orderNumber, Boolean delete) throws Exception {
+    public static void generatePdf(String filePath, String email, String comment, String orderNumber, Boolean delete, Stage mainStage) throws Exception {
         File file = new File(filePath);
         file.getParentFile().mkdirs();
         PdfWriter writer = new PdfWriter(file);
@@ -59,6 +63,16 @@ public class PdfGeneratorUtil {
             document.add(topSectionTable);
             document.close();
 
+
+            javafx.application.Platform.runLater(() -> {
+                try {
+                    PdfPreviewUtil.showPdfPreview(file, mainStage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            /*
             if (Desktop.isDesktopSupported()) {
                 Desktop.getDesktop().open(file);
 
@@ -81,8 +95,12 @@ public class PdfGeneratorUtil {
                     }, 1, TimeUnit.SECONDS);
                 }
             }
+
+
         } else {
             throw new Exception("Logo file not found");
+        }
+        */
         }
     }
 }
