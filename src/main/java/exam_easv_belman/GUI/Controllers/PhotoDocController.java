@@ -173,21 +173,25 @@ private void updateImageSizes() {
 }
 private void handleImageClick(Photo photo) {
     try {
+        System.out.println("handleImageClick triggered with photo: " + photo);
         Navigator.getInstance().setRoot(View.IMG_VIEW, controller -> {
             System.out.println(controller);
             if (controller instanceof ImageController) {
-                ((ImageController) controller).setImage(photo);
-                if(!isProduct) {
+                ImageController imageController = (ImageController) controller;
+
+                System.out.println("Controller is an instance of ImageController.");
+                imageController.setImage(photo);  // Ensure this method works
+                imageController.setPhoto(photo); // Set additional photo data
+
+                if (!isProduct){
                     try {
-                        ((ImageController) controller).setOrderNumber(txtOrderNumber.getText(), false);
+                        imageController.setOrderNumber(txtOrderNumber.getText(), false);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }
-                else if(isProduct)
-                {
+                } else{
                     try {
-                        ((ImageController) controller).setOrderNumber(txtOrderNumber.getText(), true);
+                        imageController.setOrderNumber(txtOrderNumber.getText(), true);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

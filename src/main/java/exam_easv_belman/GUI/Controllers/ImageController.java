@@ -2,8 +2,10 @@ package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Role;
+import exam_easv_belman.BE.Tag;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.Models.PhotoModel;
+import exam_easv_belman.GUI.Models.TagModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
@@ -17,6 +19,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -35,6 +39,9 @@ import java.util.Objects;
 public class ImageController implements Initializable {
 
     private Photo photo;
+    private TagModel tagModel;
+    private PhotoModel photoModel;
+
     @FXML
     private HBox rootHBox;
     @FXML
@@ -55,9 +62,11 @@ public class ImageController implements Initializable {
     private Button btnDelete;
     @FXML
     private Button btnConfirm;
-    private PhotoModel photoModel;
+
     @FXML
-    private Button btnQC;
+    private ComboBox<Tag> cbmBox;
+    @FXML
+    private ListView<Tag> photoTagsListView;
     @FXML
     private Button btnComment;
 
@@ -68,6 +77,23 @@ public class ImageController implements Initializable {
             imageView.setImage(image);
         }
     }
+
+    public void setPhoto(Photo photo){
+        this.photo = photo;
+
+        try {
+            photoTagsListView.getItems().setAll(photoModel.getTagsForPhoto(photo));
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Failed to load tags for photo", Alert.AlertType.ERROR);
+        }
+
+        try{
+            loadAvailableTags();
+        }catch (Exception e){
+            AlertHelper.showAlert("Error", "Failed to load available tags", Alert.AlertType.ERROR);
+        }
+    }
+
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
@@ -96,6 +122,22 @@ public class ImageController implements Initializable {
         if(SessionManager.getInstance().getCurrentUser().getRole() == Role.OPERATOR)
         {
             btnComment.setVisible(false);
+        }
+
+        try {
+            tagModel = new TagModel(); // Initialize with BLL layer
+            photoModel = new PhotoModel(); // Initialize with BLL layer
+            loadAvailableTags();
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Failed to initialize TagModel", Alert.AlertType.ERROR);
+        }
+    }
+
+    private void loadAvailableTags() throws Exception {
+        try {
+            cbmBox.getItems().setAll(tagModel.getAllTags());
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Failed to load available tags", Alert.AlertType.ERROR);
         }
 
     }
@@ -190,6 +232,36 @@ public class ImageController implements Initializable {
         this.isProduct = isProduct;
     }
 
+
+    /*
+     Checks if there’s a tag selected in the ComboBox.
+    Verifies that a valid photo (photo) is selected.
+    Calls addTagToPhoto via PhotoModel to add the tag to the PhotoTags table.
+    Updates the photoTagsListView with the new tag.
+
+     */
+
+    @FXML
+    private void handleAddTag(ActionEvent actionEvent) {
+        Tag selectedTag = cbmBox.getValue();
+
+        if (selectedTag == null){
+            AlertHelper.showAlert("Error", "No tag selected", Alert.AlertType.ERROR);
+        }
+
+        if (photo == null){
+            AlertHelper.showAlert("Error", "No photo selected", Alert.AlertType.ERROR);
+        }
+
+        try {
+            photoModel.addTagToPhoto(photo, selectedTag);
+            photoTagsListView.getItems().add(selectedTag);
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to add tag", Alert.AlertType.ERROR);
+        }
+    }
+
     @FXML
     private void onHandleComment(ActionEvent actionEvent) throws IOException {
         try {
@@ -210,4 +282,6 @@ public class ImageController implements Initializable {
             AlertHelper.showAlert("Error", "Failed to load TicketManagementView", Alert.AlertType.ERROR);
         }
     }
+
+
 }
