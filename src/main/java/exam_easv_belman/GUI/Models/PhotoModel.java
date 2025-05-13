@@ -41,7 +41,6 @@ public class PhotoModel {
         photoManager.deleteImage(photo);
     }
 
-
     public List<Tag> getTagsForPhoto(Photo photo) throws Exception {
         return tagManager.getTagsForPhoto(photo);
     }
