@@ -90,4 +90,12 @@ public class LoginController implements Initializable {
          */
     }
 
+    @FXML
+    private void handleAdminLogin(ActionEvent actionEvent) {
+        try {
+            Navigator.getInstance().goTo(View.ADMIN);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -52,6 +52,7 @@ public class ImageController implements Initializable {
     private PhotoModel photoModel;
     @FXML
     private Button btnQC;
+    public boolean isQC = false;
 
     public void setImage(Photo photo) {
         this.photo = photo;
@@ -87,26 +88,43 @@ public class ImageController implements Initializable {
 
     @FXML
     private void handleReturn(ActionEvent actionEvent) {
-        try {
-            Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
-                if (controller instanceof PhotoDocController) {
-                    try {
-                        if(!isProduct) {
-                            ((PhotoDocController) controller).setOrderNumber(txtOrderNumber.getText());
-                        }
-                        else
-                        {
-                            ((PhotoDocController) controller).setProductNumber(txtOrderNumber.getText());
-                        }
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+        View path;
+        if(isQC)
+        {
+            path = View.QCView;
         }
+        else
+        {
+            path = View.PHOTO_DOC;
+        }
+            try {
+                Navigator.getInstance().setRoot(path, controller -> {
+                    if (controller instanceof PhotoDocController) {
+                        try {
+                            if (!isProduct) {
+                                ((PhotoDocController) controller).setOrderNumber(txtOrderNumber.getText());
+                            } else {
+                                ((PhotoDocController) controller).setProductNumber(txtOrderNumber.getText());
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else if (controller instanceof QCController) {
+                        try {
+                            if(!isProduct)
+                            ((QCController) controller).setOrderNumber(txtOrderNumber.getText());
+                            else
+                                ((QCController) controller).setProductNumber(txtOrderNumber.getText());
+                        } catch (Exception e) {
+                            AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
+            }
     }
 
     @FXML

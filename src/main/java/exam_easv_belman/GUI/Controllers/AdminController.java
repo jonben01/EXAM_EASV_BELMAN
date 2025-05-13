@@ -60,7 +60,7 @@ public class AdminController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         populateUserList();
-        lblCurrentUser.setText(SessionManager.getInstance().getCurrentUser().getUsername());
+        //lblCurrentUser.setText(SessionManager.getInstance().getCurrentUser().getUsername());
 
         if (lstUsers.getItems() != null) {
             lstUsers.getSelectionModel().select(0);
