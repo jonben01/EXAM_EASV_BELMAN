@@ -227,6 +227,12 @@ public class PhotoDAO implements IPhotoDataAccess{
     }
 
     @Override
+    public void addCommentToPhoto(String comment, Photo photo) throws SQLException {
+        String sql = "UPDATE Photos SET comment = ? WHERE id = ?";
+        
+    }
+
+    @Override
     public void deleteImageFromDatabase(Photo photo) throws SQLException {
         String sql = "DELETE FROM Photos WHERE id = ?";
         try(Connection conn = dbConnector.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)){

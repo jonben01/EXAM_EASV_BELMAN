@@ -28,4 +28,6 @@ public interface IPhotoDataAccess {
     ObservableList<Photo> getImagesForOrder(String orderNumber) throws SQLException;
 
     Product getProductFromNumber(String photoNumber) throws SQLException;
+
+    void addCommentToPhoto(String comment, Photo photo) throws SQLException;
 }

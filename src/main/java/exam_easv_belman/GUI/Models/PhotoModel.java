@@ -41,6 +41,7 @@ public class PhotoModel {
         photoManager.deleteImage(photo);
     }
 
+
     public List<Tag> getTagsForPhoto(Photo photo) throws Exception {
         return tagManager.getTagsForPhoto(photo);
     }
@@ -49,5 +50,8 @@ public class PhotoModel {
         tagManager.addTagToPhoto(photo, tag);
     }
 
-
+    public void addCommentToPhoto(String comment, Photo photo)
+    {
+        photoManager.addCommentToPhoto(comment, photo);
+    }
 }

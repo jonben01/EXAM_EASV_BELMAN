@@ -39,4 +39,8 @@ public class PhotoManager {
     public ObservableList<Photo> getImagesForProduct(String productNumber) throws SQLException {
         return photoDataAccess.getImagesForProduct(productNumber);
     }
+
+    public void addCommentToPhoto(String comment, Photo photo) {
+        photoDataAccess.addCommentToPhoto(comment, photo);
+    }
 }
