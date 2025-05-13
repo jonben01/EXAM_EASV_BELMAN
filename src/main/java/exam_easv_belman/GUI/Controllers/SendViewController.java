@@ -2,6 +2,7 @@ package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BLL.util.Gmailer;
 import exam_easv_belman.BLL.util.PdfGeneratorUtil;
+import exam_easv_belman.GUI.Models.OrderModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class SendViewController implements Initializable {
@@ -34,16 +36,28 @@ public class SendViewController implements Initializable {
     private TextField txtEmail;
     @FXML
     private TextField txtComment;
+    private OrderModel orderModel;
 
     private Gmailer gMailer;
 
-    public void setOrderNumber(String orderNumber) {
+    public void setOrderNumber(String orderNumber) throws Exception {
+        if (orderModel == null) {
+            orderModel = new OrderModel();
+        }
         SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
         txtOrderNumber.setText(orderNumber);
+        String email = orderModel.getEmailForOrder(orderNumber);
+        txtEmail.setText(email);
+        txtComment.setText(orderModel.getCommentForOrder(txtOrderNumber.getText()));
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        try {
+            orderModel = new OrderModel();
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Failed to load SendView", Alert.AlertType.ERROR);
+        }
         try {
             gMailer = new Gmailer();
         } catch (GeneralSecurityException e) {
@@ -98,7 +112,7 @@ public class SendViewController implements Initializable {
         Stage stage = (Stage) txtOrderNumber.getScene().getWindow();
 
         PdfGeneratorUtil.generatePdf(filePath, txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), false, stage);
-
+        orderModel.addCommentToOrder(txtComment.getText(), txtOrderNumber.getText());
         gMailer.sendMail(txtOrderNumber.getText(), "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: " + txtOrderNumber.getText(),txtEmail.getText(), generatedPDF);
 
         boolean deleted = generatedPDF.delete();

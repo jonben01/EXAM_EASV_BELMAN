@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.io.File;
 import javafx.geometry.Insets;
@@ -242,7 +243,13 @@ private void handleImageClick(Photo photo) {
         try {
             Navigator.getInstance().goTo(View.ORDER, controller -> {
                 if (controller instanceof SendViewController) {
-                    ((SendViewController) controller).setOrderNumber(orderNumber);
+                    try {
+                        ((SendViewController) controller).setOrderNumber(orderNumber);
+                    } catch (SQLException e) {
+                        AlertHelper.showAlert("Error", "Failed to load OrderView", Alert.AlertType.ERROR);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
         } catch (Exception e) {

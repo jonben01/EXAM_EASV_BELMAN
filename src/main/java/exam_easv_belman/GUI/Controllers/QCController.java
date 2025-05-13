@@ -30,6 +30,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class QCController implements Initializable {
@@ -247,7 +248,13 @@ public class QCController implements Initializable {
         try {
             Navigator.getInstance().goTo(View.SEND_VIEW, controller -> {
                 if (controller instanceof SendViewController) {
-                    ((SendViewController) controller).setOrderNumber(orderNumber);
+                    try {
+                        ((SendViewController) controller).setOrderNumber(orderNumber);
+                    } catch (SQLException e) {
+                        AlertHelper.showAlert("Error", "Failed to load SendView", Alert.AlertType.ERROR);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
         } catch (Exception e) {
