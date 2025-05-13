@@ -11,7 +11,10 @@ import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -19,8 +22,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
@@ -52,7 +58,8 @@ public class ImageController implements Initializable {
     private PhotoModel photoModel;
     @FXML
     private Button btnQC;
-    public boolean isQC = false;
+    @FXML
+    private Button btnComment;
 
     public void setImage(Photo photo) {
         this.photo = photo;
@@ -73,6 +80,8 @@ public class ImageController implements Initializable {
         btnDelete.prefHeightProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
         btnConfirm.prefWidthProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
         btnConfirm.prefHeightProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
+        btnComment.prefWidthProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
+        btnComment.prefHeightProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
 
         Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-log.png")));
         ImageView imgView = new ImageView(img);
@@ -83,13 +92,18 @@ public class ImageController implements Initializable {
 
         setButtonGraphic(btnDelete, "/images/icon-trash.png");
         setButtonGraphic(btnConfirm, "/images/icon-check.png");
+        setButtonGraphic(btnComment, "/images/icon-note.png");
+        if(SessionManager.getInstance().getCurrentUser().getRole() == Role.OPERATOR)
+        {
+            btnComment.setVisible(false);
+        }
 
     }
 
     @FXML
     private void handleReturn(ActionEvent actionEvent) {
         View path;
-        if(isQC)
+        if(SessionManager.getInstance().getCurrentUser().getRole() == Role.QC)
         {
             path = View.QCView;
         }
@@ -174,5 +188,26 @@ public class ImageController implements Initializable {
     public void setOrderNumber(String orderNumber, boolean isProduct) throws Exception {
         txtOrderNumber.setText(orderNumber);
         this.isProduct = isProduct;
+    }
+
+    @FXML
+    private void onHandleComment(ActionEvent actionEvent) throws IOException {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/CommentView.fxml"));
+            Parent root = fxmlLoader.load();
+            CommentController controller = fxmlLoader.getController();
+
+            Stage stage = new Stage();
+            stage.setTitle("Add comment");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(btnComment.getScene().getWindow());
+            stage.showAndWait();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load TicketManagementView", Alert.AlertType.ERROR);
+        }
     }
 }

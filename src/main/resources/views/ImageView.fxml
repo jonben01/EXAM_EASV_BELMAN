@@ -54,6 +54,8 @@
                      </VBox.margin>
                   </Button>
                   <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                  <Button fx:id="btnComment" mnemonicParsing="false" onAction="#onHandleComment" style="-fx-background-color: #004b88;" styleClass="side-button" stylesheets="@../css/general.css" />
+                  <Region layoutX="10.0" layoutY="143.0" prefHeight="200.0" prefWidth="200.0" />
                   <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#handleDelete" style="-fx-background-color: #004b88;" styleClass="side-button" stylesheets="@../css/general.css" />
                   <Region layoutX="10.0" layoutY="303.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                </children></VBox>

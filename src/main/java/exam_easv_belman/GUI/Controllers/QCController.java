@@ -212,7 +212,6 @@ public class QCController implements Initializable {
             Navigator.getInstance().setRoot(View.IMG_VIEW, controller -> {
                 System.out.println(controller);
                 if (controller instanceof ImageController) {
-                    ((ImageController) controller).isQC = true;
                     ((ImageController) controller).setImage(photo);
                     if(!isProduct) {
                         try {

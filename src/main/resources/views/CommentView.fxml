@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.CommentController">
+   <children>
+      <TextField fx:id="txtComment" layoutX="13.0" layoutY="15.0" prefHeight="284.0" prefWidth="571.0" />
+      <Button layoutX="496.0" layoutY="340.0" mnemonicParsing="false" onAction="#handleConfirm" style="-fx-background-color: #004b88;" stylesheets="@../css/general.css" text="Button" />
+   </children>
+</AnchorPane>
