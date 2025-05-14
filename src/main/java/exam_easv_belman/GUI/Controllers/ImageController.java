@@ -268,6 +268,7 @@ public class ImageController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/CommentView.fxml"));
             Parent root = fxmlLoader.load();
             CommentController controller = fxmlLoader.getController();
+            controller.setPhoto(photo);
 
             Stage stage = new Stage();
             stage.setTitle("Add comment");

@@ -41,8 +41,7 @@ public class PhotoModel {
         photoManager.deleteImage(photo);
     }
 
-    public void addCommentToPhoto(String comment, Photo photo)
-    {
+    public void addCommentToPhoto(String comment, Photo photo) throws SQLException {
         photoManager.addCommentToPhoto(comment, photo);
     }
 

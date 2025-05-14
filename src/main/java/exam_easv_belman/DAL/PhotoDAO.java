@@ -196,6 +196,7 @@ public class PhotoDAO implements IPhotoDataAccess{
                 tempImg.setFilepath(rs.getString("file_path"));
                 tempImg.setUploadedBy(rs.getInt("uploaded_by"));
                 tempImg.setUploadTime(rs.getObject("uploaded_at", LocalDateTime.class));
+                tempImg.setComment(rs.getString("comment"));
                 photos.add(tempImg);
             }
             System.out.println("length:" + photos.size());
@@ -229,7 +230,12 @@ public class PhotoDAO implements IPhotoDataAccess{
     @Override
     public void addCommentToPhoto(String comment, Photo photo) throws SQLException {
         String sql = "UPDATE Photos SET comment = ? WHERE id = ?";
-        
+        try(Connection conn = dbConnector.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setString(1, comment);
+            ps.setInt(2, photo.getId());
+            ps.executeUpdate();
+            System.out.println("comment added to photo with id " + photo.getId());
+        }
     }
 
     @Override

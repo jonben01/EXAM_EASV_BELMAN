@@ -40,7 +40,7 @@ public class PhotoManager {
         return photoDataAccess.getImagesForProduct(productNumber);
     }
 
-    public void addCommentToPhoto(String comment, Photo photo) {
+    public void addCommentToPhoto(String comment, Photo photo) throws SQLException {
         photoDataAccess.addCommentToPhoto(comment, photo);
     }
 }
