@@ -106,11 +106,14 @@ public class ImageController implements Initializable {
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
+        txtOrderNumber.setText(SessionManager.getInstance().getCurrentProductNumber());
+        isProduct = SessionManager.getInstance().getIsProduct();
         photoModel = new PhotoModel();
         sidebarVbox.prefWidthProperty().bind(rootHBox.widthProperty().multiply(sidebarSize));
         imageView.fitWidthProperty().bind(rootHBox.widthProperty().multiply(1-sidebarSize));
         imageView.fitHeightProperty().bind(rootHBox.heightProperty());
 
+        //todo sæt i sin egen metode. wtf.
         btnDelete.prefWidthProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
         btnDelete.prefHeightProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
         btnConfirm.prefWidthProperty().bind(rootHBox.heightProperty().multiply(buttonSize));
@@ -198,12 +201,9 @@ public class ImageController implements Initializable {
                     }
                     else if (controller instanceof QCController) {
                         try {
-                            if(!isProduct)
                             ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
-                            else
-                                ((QCController) controller).setProductNumber(SessionManager.getInstance().getCurrentProductNumber());
                         } catch (Exception e) {
-                            AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+                            throw new RuntimeException(e);
                         }
                     }
                 });
@@ -254,12 +254,6 @@ public class ImageController implements Initializable {
         imgView.setPreserveRatio(true);
 
         button.setGraphic(imgView);
-    }
-
-
-    public void setOrderNumber(String orderNumber, boolean isProduct) throws Exception {
-        txtOrderNumber.setText(orderNumber);
-        this.isProduct = isProduct;
     }
 
 

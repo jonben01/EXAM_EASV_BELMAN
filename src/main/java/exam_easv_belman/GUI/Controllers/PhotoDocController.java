@@ -184,20 +184,6 @@ private void handleImageClick(Photo photo) {
                 System.out.println("Controller is an instance of ImageController.");
                 imageController.setImage(photo);  // Ensure this method works
                 imageController.setPhoto(photo); // Set additional photo data
-
-                if (!isProduct){
-                    try {
-                        imageController.setOrderNumber(txtOrderNumber.getText(), false);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                } else{
-                    try {
-                        imageController.setOrderNumber(txtOrderNumber.getText(), true);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
             }
         });
     }
@@ -230,17 +216,6 @@ private void handleImageClick(Photo photo) {
             pagination.setPageFactory(this::fillPhotoGrid);
         }
 
-    }
-    public void setProductNumber(String productNumber) throws Exception {
-        isProduct = true;
-        txtOrderNumber.setText(productNumber);
-        this.orderNumber = SessionManager.getInstance().getCurrentOrderNumber();
-        isProduct = true;
-        imagesFromDatabase = photoModel.getImagesForProduct(SessionManager.getInstance().getCurrentProductNumber());
-
-        int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
-        pagination.setPageCount(pageCount);
-        pagination.setPageFactory(this::fillPhotoGrid);
     }
 
     public void handleCamera(ActionEvent actionEvent) {

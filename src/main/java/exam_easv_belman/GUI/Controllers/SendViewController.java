@@ -80,7 +80,11 @@ public class SendViewController implements Initializable {
         try {
             Navigator.getInstance().goTo(View.QCView, controller -> {
                 if (controller instanceof QCController) {
-                    ((QCController) controller).setOrderNumber(orderNumber);
+                    try {
+                        ((QCController) controller).setOrderNumber(orderNumber);
+                    } catch (Exception e) {
+                        AlertHelper.showAlert("Error", "Failed to load QCView (SendViewController.java)", Alert.AlertType.ERROR);
+                    }
                 }
             });
         } catch (Exception e) {

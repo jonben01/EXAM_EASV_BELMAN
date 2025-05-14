@@ -16,10 +16,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Pagination;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -54,14 +51,31 @@ public class QCController implements Initializable {
 
     private static final int MAX_PHOTOS = 6;
     private PhotoModel photoModel;
+    @FXML
+    private MenuButton btnProduct;
 
 
-    public void setOrderNumber(String orderNumber) {
-        txtOrderNumber.setText(orderNumber);
-        isProduct = false;
-        int pageCount = 1;
-        pagination.setPageCount(pageCount);
-        pagination.setPageFactory(this::fillPhotoGrid);
+    public void setOrderNumber(String orderNumber) throws Exception {
+        SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
+        txtOrderNumber.setText(orderNumber + "-");
+        isProduct = SessionManager.getInstance().getIsProduct();
+        if(isProduct)
+        {
+            String productNumber = SessionManager.getInstance().getCurrentProductNumber();
+            String productIdentifier = productNumber.substring(productNumber.lastIndexOf("-")+1);
+            btnProduct.setText(productIdentifier);
+            imagesFromDatabase = photoModel.getImagesForProduct(SessionManager.getInstance().getCurrentProductNumber());
+            int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
+            pagination.setPageCount(pageCount);
+            pagination.setPageFactory(this::fillPhotoGrid);
+        }
+        else
+        {
+            int pageCount = 1;
+            pagination.setPageCount(pageCount);
+            pagination.setPageFactory(this::fillPhotoGrid);
+        }
+
     }
 
     public void setProductNumber(String productNumber) throws Exception {
@@ -213,21 +227,6 @@ public class QCController implements Initializable {
                 System.out.println(controller);
                 if (controller instanceof ImageController) {
                     ((ImageController) controller).setImage(photo);
-                    if(!isProduct) {
-                        try {
-                            ((ImageController) controller).setOrderNumber(txtOrderNumber.getText(), false);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    else if(isProduct)
-                    {
-                        try {
-                            ((ImageController) controller).setOrderNumber(txtOrderNumber.getText(), true);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
                 }
             });
         }

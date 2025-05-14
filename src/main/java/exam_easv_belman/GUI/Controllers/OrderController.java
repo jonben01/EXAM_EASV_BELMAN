@@ -150,11 +150,6 @@ public class OrderController {
             Navigator.getInstance().setRoot(View.QCView, controller -> {
                 if (controller instanceof QCController) {
 
-                    try {
-                        ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
                     if(!IsProduct) {
                         SessionManager.getInstance().setIsProduct(false);
                         SessionManager.getInstance().setCurrentProductNumber(null);
@@ -162,6 +157,12 @@ public class OrderController {
                     else if(IsProduct) {
                         SessionManager.getInstance().setIsProduct(true);
                         SessionManager.getInstance().setCurrentProductNumber(orderNumber);
+                    }
+
+                    try {
+                        ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 }
             });
