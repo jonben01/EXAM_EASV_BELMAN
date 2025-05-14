@@ -2,6 +2,7 @@ package exam_easv_belman.GUI.Models;
 
 import exam_easv_belman.BE.Product;
 import exam_easv_belman.BLL.ProductManager;
+import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 
 import java.net.URL;
@@ -19,5 +20,9 @@ public class ProductModel {
 
     public List<Product> getAvailableProducts() throws SQLException {
         return productManager.getAvailableProducts();
+    }
+
+    public ObservableList<Product> getProductsForOrder(String orderNumber) throws SQLException {
+        return productManager.getProductsForOrder(orderNumber);
     }
 }

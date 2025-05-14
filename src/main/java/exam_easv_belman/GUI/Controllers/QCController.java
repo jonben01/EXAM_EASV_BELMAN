@@ -1,9 +1,11 @@
 package exam_easv_belman.GUI.Controllers;
 
 import exam_easv_belman.BE.Photo;
+import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.Models.PhotoModel;
+import exam_easv_belman.GUI.Models.ProductModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
@@ -53,6 +55,7 @@ public class QCController implements Initializable {
     private PhotoModel photoModel;
     @FXML
     private MenuButton btnProduct;
+    private ProductModel productModel;
 
 
     public void setOrderNumber(String orderNumber) throws Exception {
@@ -75,26 +78,20 @@ public class QCController implements Initializable {
             pagination.setPageCount(pageCount);
             pagination.setPageFactory(this::fillPhotoGrid);
         }
-
-    }
-
-    public void setProductNumber(String productNumber) throws Exception {
-        try {
-            txtOrderNumber.setText(productNumber);
-            isProduct = true;
-            imagesFromDatabase = photoModel.getImagesForProduct(txtOrderNumber.getText());
-            int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
-            pagination.setPageCount(pageCount);
-            pagination.setPageFactory(this::fillPhotoGrid);
-        } catch (Exception e) {
-            AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
-        }
+    populateMenu();
     }
 
     //TODO remember to use product number properly.
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        try {
+            productModel = new ProductModel();
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
+            throw new RuntimeException(e);
+        }
+
         photoModel = new PhotoModel();
     Image img = new Image(getClass().getResourceAsStream("/images/icon-log.png"));
     ImageView imgView = new ImageView(img);
@@ -268,6 +265,27 @@ public class QCController implements Initializable {
             Navigator.getInstance().goTo(View.ORDER);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void populateMenu() throws SQLException {
+        btnProduct.getItems().clear();
+        ObservableList<Product> productsForOrder = productModel.getProductsForOrder(SessionManager.getInstance().getCurrentOrderNumber());
+
+        for(Product product : productsForOrder)
+        {
+            String productIndex = product.getProduct_number().substring(product.getProduct_number().lastIndexOf("-")+1);
+            MenuItem menuItem = new MenuItem(productIndex);
+            menuItem.setOnAction(event -> {
+                try {
+                    SessionManager.getInstance().setCurrentProductNumber(product.getProduct_number());
+                    setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                } catch (Exception e) {
+                    AlertHelper.showAlert("Error", "Failed to load PhotoDocView (PopulateMenu)", Alert.AlertType.ERROR);
+                    e.printStackTrace();
+                }
+            });
+            btnProduct.getItems().add(menuItem);
         }
     }
 }

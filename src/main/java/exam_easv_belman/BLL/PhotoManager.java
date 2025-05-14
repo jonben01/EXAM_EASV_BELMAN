@@ -1,6 +1,7 @@
 package exam_easv_belman.BLL;
 
 import exam_easv_belman.BE.Photo;
+import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.Tag;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.DAL.IPhotoDataAccess;
