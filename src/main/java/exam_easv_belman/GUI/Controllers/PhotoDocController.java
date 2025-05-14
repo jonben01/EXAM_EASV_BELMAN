@@ -56,6 +56,8 @@ public class PhotoDocController {
     private Pagination pagination;
     @FXML
     private StackPane photoGridContainer;
+    @FXML
+    private MenuButton btnProduct;
 
 
     @FXML
@@ -207,20 +209,34 @@ private void handleImageClick(Photo photo) {
 
     public void setOrderNumber(String orderNumber) throws Exception {
         SessionManager.getInstance().setCurrentOrderNumber(orderNumber);
-        isProduct = false;
-        txtOrderNumber.setText(orderNumber);
+        txtOrderNumber.setText(orderNumber + "-");
         this.orderNumber = orderNumber;
-        btnOpenCamera.setDisable(true);
-        int pageCount = 1;
-        pagination.setPageCount(pageCount);
-        pagination.setPageFactory(this::fillPhotoGrid);
+        isProduct = SessionManager.getInstance().getIsProduct();
+        if(isProduct)
+        {
+            String productNumber = SessionManager.getInstance().getCurrentProductNumber();
+            String productIdentifier = productNumber.substring(productNumber.lastIndexOf("-")+1);
+            btnProduct.setText(productIdentifier);
+            imagesFromDatabase = photoModel.getImagesForProduct(SessionManager.getInstance().getCurrentProductNumber());
+            int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
+            pagination.setPageCount(pageCount);
+            pagination.setPageFactory(this::fillPhotoGrid);
+        }
+        else
+        {
+            btnOpenCamera.setDisable(true);
+            int pageCount = 1;
+            pagination.setPageCount(pageCount);
+            pagination.setPageFactory(this::fillPhotoGrid);
+        }
+
     }
     public void setProductNumber(String productNumber) throws Exception {
         isProduct = true;
         txtOrderNumber.setText(productNumber);
         this.orderNumber = SessionManager.getInstance().getCurrentOrderNumber();
         isProduct = true;
-        imagesFromDatabase = photoModel.getImagesForProduct(txtOrderNumber.getText());
+        imagesFromDatabase = photoModel.getImagesForProduct(SessionManager.getInstance().getCurrentProductNumber());
 
         int pageCount = (int) Math.ceil((double) imagesFromDatabase.size() / MAX_PHOTOS);
         pagination.setPageCount(pageCount);
@@ -228,14 +244,7 @@ private void handleImageClick(Photo photo) {
     }
 
     public void handleCamera(ActionEvent actionEvent) {
-        String productNumber = txtOrderNumber.getText();
-
-        Navigator.getInstance().goTo(View.CAMERA, controller -> {
-            if (controller instanceof CameraController) {
-                ((CameraController) controller).setProductNumber(productNumber);
-            }
-        });
-
+        Navigator.getInstance().goTo(View.CAMERA);
     }
 
     public void handleReturn(ActionEvent actionEvent) {

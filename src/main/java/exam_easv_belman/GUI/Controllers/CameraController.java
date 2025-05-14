@@ -70,12 +70,10 @@ public class CameraController implements Initializable {
         photoModel = new PhotoModel();
     }
 
-    public void setProductNumber(String productNumber) {
-        this.productNumber = productNumber;
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        productNumber = SessionManager.getInstance().getCurrentProductNumber();
 
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(cameraStackPane.widthProperty());
@@ -214,7 +212,7 @@ public class CameraController implements Initializable {
         Navigator.getInstance().goTo(View.PHOTO_DOC, controller -> {
             if (controller instanceof PhotoDocController pDC) {
                 try {
-                    pDC.setProductNumber(productNumber);
+                    pDC.setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -226,7 +224,7 @@ public class CameraController implements Initializable {
     public void handleReturn(ActionEvent actionEvent) {
         Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
             try {
-                ((PhotoDocController) controller).setProductNumber(productNumber);
+                ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

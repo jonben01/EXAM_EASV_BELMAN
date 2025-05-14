@@ -157,11 +157,7 @@ public class ImageController implements Initializable {
                 Navigator.getInstance().setRoot(path, controller -> {
                     if (controller instanceof PhotoDocController) {
                         try {
-                            if (!isProduct) {
-                                ((PhotoDocController) controller).setOrderNumber(txtOrderNumber.getText());
-                            } else {
-                                ((PhotoDocController) controller).setProductNumber(txtOrderNumber.getText());
-                            }
+                                ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -169,9 +165,9 @@ public class ImageController implements Initializable {
                     else if (controller instanceof QCController) {
                         try {
                             if(!isProduct)
-                            ((QCController) controller).setOrderNumber(txtOrderNumber.getText());
+                            ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                             else
-                                ((QCController) controller).setProductNumber(txtOrderNumber.getText());
+                                ((QCController) controller).setProductNumber(SessionManager.getInstance().getCurrentProductNumber());
                         } catch (Exception e) {
                             AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
                         }

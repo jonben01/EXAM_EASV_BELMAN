@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import javax.mail.Session;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,20 +125,18 @@ public class OrderController {
                 System.out.println(controller);
                 if (controller instanceof PhotoDocController) {
                     if(!IsProduct) {
+                        SessionManager.getInstance().setIsProduct(false);
+                        SessionManager.getInstance().setCurrentProductNumber(null);
+                    }
+                    else if(IsProduct) {
+                        SessionManager.getInstance().setIsProduct(true);
+                        SessionManager.getInstance().setCurrentProductNumber(orderNumber);
+                    }
                         try {
-                            ((PhotoDocController) controller).setOrderNumber(orderNumber);
+                            ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
-                    }
-                    else if(IsProduct)
-                    {
-                        try {
-                            ((PhotoDocController) controller).setProductNumber(orderNumber);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
                 }
             });
         } catch (Exception e) {
@@ -150,16 +149,19 @@ public class OrderController {
         try {
             Navigator.getInstance().setRoot(View.QCView, controller -> {
                 if (controller instanceof QCController) {
-                    if(!IsProduct) {
-                        ((QCController) controller).setOrderNumber(orderNumber);
 
+                    try {
+                        ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    if(!IsProduct) {
+                        SessionManager.getInstance().setIsProduct(false);
+                        SessionManager.getInstance().setCurrentProductNumber(null);
                     }
                     else if(IsProduct) {
-                        try {
-                            ((QCController) controller).setProductNumber(orderNumber);
-                        } catch (Exception e) {
-                            AlertHelper.showAlert("Error", "Failed to load QCView", Alert.AlertType.ERROR);
-                        }
+                        SessionManager.getInstance().setIsProduct(true);
+                        SessionManager.getInstance().setCurrentProductNumber(orderNumber);
                     }
                 }
             });
