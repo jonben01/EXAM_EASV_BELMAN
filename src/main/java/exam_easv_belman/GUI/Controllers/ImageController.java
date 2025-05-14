@@ -4,6 +4,7 @@ import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.Tag;
 import exam_easv_belman.BE.User;
+import exam_easv_belman.BLL.TagManager;
 import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.GUI.Models.TagModel;
 import exam_easv_belman.GUI.Navigator;
@@ -11,6 +12,7 @@ import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
 import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,12 +30,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 
 public class ImageController implements Initializable {
@@ -41,6 +45,7 @@ public class ImageController implements Initializable {
     private Photo photo;
     private TagModel tagModel;
     private PhotoModel photoModel;
+    private TagManager tagManager;
 
     @FXML
     private HBox rootHBox;
@@ -80,6 +85,10 @@ public class ImageController implements Initializable {
 
     public void setPhoto(Photo photo){
         this.photo = photo;
+
+        if (photo != null) {
+            loadPhotoTags(photo);
+        }
 
         try {
             photoTagsListView.getItems().setAll(photoModel.getTagsForPhoto(photo));
@@ -128,6 +137,19 @@ public class ImageController implements Initializable {
             tagModel = new TagModel(); // Initialize with BLL layer
             photoModel = new PhotoModel(); // Initialize with BLL layer
             loadAvailableTags();
+            applyQCRoleRestrictions();
+            cbmBox.setConverter(new StringConverter<Tag>() {
+                @Override
+                public String toString(Tag tag) {
+                    return tag != null ? tag.getName() : "";
+                }
+
+                @Override
+                public Tag fromString(String string) {
+                    return null;
+                }
+
+            });
         } catch (Exception e) {
             AlertHelper.showAlert("Error", "Failed to initialize TagModel", Alert.AlertType.ERROR);
         }
@@ -135,11 +157,23 @@ public class ImageController implements Initializable {
 
     private void loadAvailableTags() throws Exception {
         try {
-            cbmBox.getItems().setAll(tagModel.getAllTags());
+            List<Tag> allTags = tagModel.getAllTags();
+            cbmBox.setItems(FXCollections.observableList(allTags));
         } catch (Exception e) {
             AlertHelper.showAlert("Error", "Failed to load available tags", Alert.AlertType.ERROR);
         }
 
+    }
+
+    private void loadPhotoTags(Photo photo){
+        if(photo != null){
+            try {
+                List<Tag> tags = photoModel.getTagsForPhoto(photo);
+                photoTagsListView.setItems(FXCollections.observableArrayList(tags));
+            } catch (Exception e) {
+                AlertHelper.showAlert("Error", "Failed to load photo tags", Alert.AlertType.ERROR);
+            }
+        }
     }
 
     @FXML
@@ -251,7 +285,11 @@ public class ImageController implements Initializable {
 
         try {
             photoModel.addTagToPhoto(photo, selectedTag);
-            photoTagsListView.getItems().add(selectedTag);
+
+
+            List<Tag> updatedTags = tagModel.getTagsForPhoto(photo);
+            photoTagsListView.setItems(FXCollections.observableArrayList(updatedTags));
+
         } catch (Exception e) {
             e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to add tag", Alert.AlertType.ERROR);
@@ -280,5 +318,13 @@ public class ImageController implements Initializable {
         }
     }
 
+    private void applyQCRoleRestrictions(){
+        User currentUser = SessionManager.getInstance().getCurrentUser();
+        if(currentUser != null && currentUser.getRole() == Role.QC)
+        {
+            cbmBox.setDisable(true);
+        }
+
+    }
 
 }

@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class TagDAO {
+public class TagDAO implements ITagDataAccess {
 
     private DBConnector dbConnector;
 
@@ -59,15 +59,16 @@ public class TagDAO {
 
     }
 
+    @Override
     public void addTagToPhoto(Photo photo, Tag tag) throws SQLException {
-        String sql = "INSERT INTO PhotoTags (photo_id, tag_id) VALUES (?, ?)";
+        String sql = "INSERT INTO PhotoTagJunction (photo_id, tag_id) VALUES (?, ?)";
         try (Connection connection = dbConnector.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, photo.getId());
             statement.setInt(2, tag.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new SQLException(e);
+            throw new SQLException("Failed to add tag to photo",e);
         }
     }
 

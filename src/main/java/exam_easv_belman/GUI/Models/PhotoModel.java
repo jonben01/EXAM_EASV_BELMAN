@@ -50,6 +50,7 @@ public class PhotoModel {
     }
 
     public void addTagToPhoto(Photo photo, Tag tag) throws Exception {
-        tagManager.addTagToPhoto(photo, tag);
+        photoManager.addTagToPhoto(photo, tag);
     }
+
 }
