@@ -272,6 +272,7 @@ private void handleImageClick(Photo photo) {
             MenuItem menuItem = new MenuItem(productIndex);
             menuItem.setOnAction(event -> {
                 try {
+                    SessionManager.getInstance().setIsProduct(true);
                     SessionManager.getInstance().setCurrentProductNumber(product.getProduct_number());
                     setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
                 } catch (Exception e) {
