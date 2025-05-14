@@ -96,4 +96,17 @@ public class TagDAO implements ITagDataAccess {
             }
         return tags;
     }
+
+    public void removeTagFromPhoto(Photo photo, Tag tag) throws SQLException {
+        String sql = "DELETE FROM PhotoTagJunction WHERE photo_id = ? AND tag_id = ?";
+        try (Connection connection = dbConnector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, photo.getId());
+            statement.setInt(2, tag.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException("Failed to remove tag from photo", e);
+        }
+
+    }
 }

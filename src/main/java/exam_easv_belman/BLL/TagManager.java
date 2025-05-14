@@ -4,6 +4,7 @@ import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Tag;
 import exam_easv_belman.DAL.TagDAO;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class TagManager {
@@ -31,8 +32,7 @@ public class TagManager {
     }
 
 
-
-
-
-
+    public void removeTagFromPhoto(Photo photo, Tag tag) throws Exception {
+        tagDao.removeTagFromPhoto(photo, tag);
+    }
 }

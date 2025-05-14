@@ -3,9 +3,11 @@ package exam_easv_belman.GUI.Controllers;
 import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.Role;
+import exam_easv_belman.BE.Tag;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.Models.PhotoModel;
 import exam_easv_belman.GUI.Models.ProductModel;
+import exam_easv_belman.GUI.Models.TagModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
@@ -14,6 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -21,6 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.nio.file.Files;
@@ -98,8 +102,8 @@ private Node fillPhotoGrid(int pageIndex) {
         gridPhoto.add(noImagesLabel, 0, 0);
         return photoGridContainer;
     }
-    if(imagesFromDatabase.size() == 0)
-    {
+
+    if (imagesFromDatabase.isEmpty()) {
         Label noImagesLabel = new Label("This product has no images yet");
         noImagesLabel.getStylesheets().add("/css/general.css");
         noImagesLabel.getStyleClass().add("label-image");
@@ -122,51 +126,83 @@ private Node fillPhotoGrid(int pageIndex) {
 
     gridPhoto.widthProperty().addListener((obs, oldVal, newVal) -> updateImageSizes());
     gridPhoto.heightProperty().addListener((obs, oldVal, newVal) -> updateImageSizes());
+
     for (int i = startIndex; i < endIndex && i < imagesFromDatabase.size(); i++) {
         Photo photo = imagesFromDatabase.get(i);
-            try {
-                ImageView imageView = new ImageView();
-                if (Files.exists(Path.of(photo.getFilepath()))) {
-                    Image image = new Image(new File(photo.getFilepath()).toURI().toString());
-                    imageView.setImage(image);
 
-                    imageView.fitWidthProperty().bind(gridPhoto.widthProperty().divide(2.2)); // 2.2 to account for padding
-                    imageView.fitHeightProperty().bind(gridPhoto.heightProperty().divide(3.2)); // 3.2 to account for padding
-                    imageView.setPreserveRatio(true);
+        try {
+            VBox imageContainer = new VBox();
+            imageContainer.setSpacing(5);
+
+
+            // Create an ImageView for the photo
+            ImageView imageView = new ImageView();
+            if (Files.exists(Path.of(photo.getFilepath()))) {
+                // Display the image in the ImageView
+                Image image = new Image(new File(photo.getFilepath()).toURI().toString());
+                imageView.setImage(image);
+
+                // Bind ImageView size based on grid size
+                imageView.fitWidthProperty().bind(gridPhoto.widthProperty().divide(2.2)); // 2.2 to account for padding
+                imageView.fitHeightProperty().bind(gridPhoto.heightProperty().divide(3.2)); // 3.2 to account for padding
+                imageView.setPreserveRatio(true);
 
                     GridPane.setMargin(imageView, new Insets(5));
 
                     imageView.setOnMouseClicked(event -> handleImageClick(photo));
 
-                    GridPane.setHalignment(imageView, HPos.CENTER);
-                    GridPane.setValignment(imageView, VPos.CENTER);
-                    GridPane.setFillHeight(imageView, true);
-                    GridPane.setFillWidth(imageView, true);
+                imageContainer.getChildren().add(imageView);
+            } else {
+                // If the image is missing, display a placeholder
+                Label missingImageLabel = new Label("Image not found");
+                missingImageLabel.getStylesheets().add("/css/general.css");
+                missingImageLabel.getStyleClass().add("label-image");
 
-                    gridPhoto.add(imageView, column, row);
-                } else {
-                    Label tempLabel = new Label("Image not found");
-                    tempLabel.getStylesheets().add("/css/general.css");
-                    tempLabel.getStyleClass().add("label-image");
+                imageContainer.getChildren().add(missingImageLabel);
+            }
 
-                    GridPane.setHalignment(tempLabel, HPos.CENTER);
-                    GridPane.setValignment(tempLabel, VPos.CENTER);
-                    GridPane.setFillHeight(tempLabel, true);
-                    GridPane.setFillWidth(tempLabel, true);
+            // Fetch and display tags for the photo
+            try {
+                List<Tag> tags = new TagModel().getTagsForPhoto(photo);
+                if (!tags.isEmpty()) {
+                    // Create a label to display photo tags
+                    String tagText = tags.stream()
+                            .map(Tag::getName)
+                            .reduce((tag1, tag2) -> tag1 + ", " + tag2)
+                            .orElse("No Tags");
 
-                    gridPhoto.add(tempLabel, column, row);
-                }
+                    Label tagLabel = new Label(tagText);
+                    tagLabel.getStyleClass().add("photo-tag-label");
+                    tagLabel.setMaxWidth(Double.MAX_VALUE);
+                    tagLabel.setMinSize(100,25); // Todo Fix this so it is based on how many tags it is
+                    tagLabel.setWrapText(true);
+                    tagLabel.setAlignment(Pos.CENTER);
+                    tagLabel.setTooltip(new Tooltip(tagText));
 
-                column++;
-                if (column > 1) {
-                    column = 0;
-                    row++;
+                    imageContainer.getChildren().add(0, tagLabel); // Add tag label above the image
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            // Add the container (tag label + image) to the grid
+            GridPane.setHalignment(imageContainer, HPos.CENTER);
+            GridPane.setValignment(imageContainer, VPos.CENTER);
+            gridPhoto.add(imageContainer, column, row);
+
+            // Adjust position for next image
+            column++;
+            if (column > 1) {
+                column = 0;
+                row++;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     return photoGridContainer;
+
 }
 
 private void updateImageSizes() {

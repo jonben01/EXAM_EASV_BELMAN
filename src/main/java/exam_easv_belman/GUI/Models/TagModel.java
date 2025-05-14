@@ -5,6 +5,7 @@ import exam_easv_belman.BE.Tag;
 import exam_easv_belman.BLL.TagManager;
 import exam_easv_belman.BLL.UserManager;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class TagModel {
@@ -22,5 +23,10 @@ public class TagModel {
 
     public List<Tag> getAllTags() throws Exception {
         return tagManager.getAllTags();
+    }
+
+    public void removeTagFromPhoto(Photo photo, Tag tag) throws Exception {
+        tagManager.removeTagFromPhoto(photo, tag);
+
     }
 }

@@ -85,22 +85,7 @@ public class ImageController implements Initializable {
 
     public void setPhoto(Photo photo){
         this.photo = photo;
-
-        if (photo != null) {
-            loadPhotoTags(photo);
-        }
-
-        try {
-            photoTagsListView.getItems().setAll(photoModel.getTagsForPhoto(photo));
-        } catch (Exception e) {
-            AlertHelper.showAlert("Error", "Failed to load tags for photo", Alert.AlertType.ERROR);
-        }
-
-        try{
-            loadAvailableTags();
-        }catch (Exception e){
-            AlertHelper.showAlert("Error", "Failed to load available tags", Alert.AlertType.ERROR);
-        }
+        loadPhotoTags();
     }
 
 
@@ -135,24 +120,12 @@ public class ImageController implements Initializable {
         {
             btnComment.setVisible(false);
         }
-
         try {
             tagModel = new TagModel(); // Initialize with BLL layer
             photoModel = new PhotoModel(); // Initialize with BLL layer
             loadAvailableTags();
             applyQCRoleRestrictions();
-            cbmBox.setConverter(new StringConverter<Tag>() {
-                @Override
-                public String toString(Tag tag) {
-                    return tag != null ? tag.getName() : "";
-                }
 
-                @Override
-                public Tag fromString(String string) {
-                    return null;
-                }
-
-            });
         } catch (Exception e) {
             AlertHelper.showAlert("Error", "Failed to initialize TagModel", Alert.AlertType.ERROR);
         }
@@ -160,24 +133,24 @@ public class ImageController implements Initializable {
 
     private void loadAvailableTags() throws Exception {
         try {
-            List<Tag> allTags = tagModel.getAllTags();
-            cbmBox.setItems(FXCollections.observableList(allTags));
+            cbmBox.getItems().setAll(tagModel.getAllTags());
         } catch (Exception e) {
             AlertHelper.showAlert("Error", "Failed to load available tags", Alert.AlertType.ERROR);
         }
-
     }
 
-    private void loadPhotoTags(Photo photo){
-        if(photo != null){
-            try {
-                List<Tag> tags = photoModel.getTagsForPhoto(photo);
-                photoTagsListView.setItems(FXCollections.observableArrayList(tags));
-            } catch (Exception e) {
-                AlertHelper.showAlert("Error", "Failed to load photo tags", Alert.AlertType.ERROR);
-            }
+    private void loadPhotoTags() {
+        try {
+            // Hent alle tags for dette billede fra databasen
+            List<Tag> allPhotoTags = tagModel.getTagsForPhoto(photo);
+
+            // Opdater photoTagsListView
+            photoTagsListView.getItems().setAll(allPhotoTags);
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Could not load tags for this photo.", Alert.AlertType.ERROR);
         }
     }
+
 
     @FXML
     private void handleReturn(ActionEvent actionEvent) {
@@ -267,28 +240,45 @@ public class ImageController implements Initializable {
 
     @FXML
     private void handleAddTag(ActionEvent actionEvent) {
-        Tag selectedTag = cbmBox.getValue();
-
-        if (selectedTag == null){
-            AlertHelper.showAlert("Error", "No tag selected", Alert.AlertType.ERROR);
-        }
-
-        if (photo == null){
-            AlertHelper.showAlert("Error", "No photo selected", Alert.AlertType.ERROR);
-        }
-
         try {
+            // Get the selected tag from the ComboBox
+            Tag selectedTag = cbmBox.getSelectionModel().getSelectedItem();
+            if (selectedTag == null) {
+                // No tag selected, provide user feedback
+                System.out.println("No tag selected!");
+                return;
+            }
+
+            // Check if the tag is already assigned to the photo
+            List<Tag> currentTags = tagModel.getTagsForPhoto(photo);
+            boolean tagExists = currentTags.stream()
+                    .anyMatch(tag -> tag.getId() == selectedTag.getId());
+
+            if (tagExists) {
+                // Provide feedback to the user and return
+                System.out.println("Tag already exists for this photo!");
+                return;
+            }
+
+            // Add the tag to the selected photo
             photoModel.addTagToPhoto(photo, selectedTag);
 
+            // Update the ListView to reflect the newly-added tag
+            loadPhotoTags();
 
-            List<Tag> updatedTags = tagModel.getTagsForPhoto(photo);
-            photoTagsListView.setItems(FXCollections.observableArrayList(updatedTags));
+            // Clear the ComboBox selection
+            cbmBox.getSelectionModel().clearSelection();
+
+            // Provide successful feedback
+            System.out.println("Tag added successfully!");
 
         } catch (Exception e) {
             e.printStackTrace();
-            AlertHelper.showAlert("Error", "Failed to add tag", Alert.AlertType.ERROR);
+            System.out.println("Failed to add tag: " + e.getMessage());
         }
+
     }
+
 
     @FXML
     private void onHandleComment(ActionEvent actionEvent) throws IOException {
@@ -317,6 +307,42 @@ public class ImageController implements Initializable {
         if(currentUser != null && currentUser.getRole() == Role.QC)
         {
             cbmBox.setDisable(true);
+        }
+
+    }
+
+    @FXML
+    public void handleRemoveTag(ActionEvent actionEvent) {
+        Tag selectedTag = photoTagsListView.getSelectionModel().getSelectedItem();
+
+        if (selectedTag == null) {
+            AlertHelper.showAlert("Warning", "No tag selected. Please select a tag to remove.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            // Fjern tag fra databasen
+            tagModel.removeTagFromPhoto(photo, selectedTag);
+
+            // Opdater ListView med de resterende tags
+            loadPhotoTags();
+
+            AlertHelper.showAlert("Success", "Tag removed successfully!", Alert.AlertType.INFORMATION);
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Failed to remove tag from photo. Please try again.", Alert.AlertType.ERROR);
+        }
+
+
+    }
+
+    @FXML
+    public void handleCreate(ActionEvent actionEvent) {
+        try {
+        Navigator.getInstance().showModal(View.CUSTOM_TAG);
+
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Failed to load CustomTagView", Alert.AlertType.ERROR);
+            e.printStackTrace();
         }
 
     }
