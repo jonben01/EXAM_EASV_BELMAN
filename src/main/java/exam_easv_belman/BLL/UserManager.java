@@ -39,4 +39,8 @@ public class UserManager {
     public ObservableList<User> getAllUsers() throws Exception {
          return userDAO.getAllUsers();
     }
+
+    public void deleteUser(User user) {
+        userDAO.deleteUser(user);
+    }
 }

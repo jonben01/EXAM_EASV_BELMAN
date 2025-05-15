@@ -3,8 +3,10 @@ package exam_easv_belman.DAL;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
+import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -89,6 +91,18 @@ public class UserDAO implements IUserDataAccess {
 
     @Override
     public void deleteUser(User user) {
+        String sql = "DELETE FROM Users WHERE id = ?";
+
+        try (Connection connection = dbConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, user.getId());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            AlertHelper.showAlert("Error", "Error Deleting User", Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
 
     }
 

@@ -113,6 +113,41 @@ public class AdminController implements Initializable {
 
     @FXML
     public void handleDeleteUser(ActionEvent actionEvent) {
+        User selectedUser = lstUsers.getSelectionModel().getSelectedItem();
+        if (selectedUser == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No User Selected");
+            alert.setHeaderText("Please select a user to delete.");
+            alert.setContentText("You must select a user from the list before deleting.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Confirm deletion
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Delete User");
+        confirmationAlert.setHeaderText("Are you sure you want to delete this user?");
+        confirmationAlert.setContentText("User: " + selectedUser.getUsername());
+
+        if (confirmationAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try {
+                // Delete the user using the model
+                userModel.deleteUser(selectedUser);
+
+                // Refresh the user list
+                populateUserList();
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                // Show an error alert
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setTitle("Error");
+                errorAlert.setHeaderText("Unable to Delete User");
+                errorAlert.setContentText("An error occurred while attempting to delete the user.");
+                errorAlert.showAndWait();
+            }
+        }
+
     }
 
     private void populateUserList() {

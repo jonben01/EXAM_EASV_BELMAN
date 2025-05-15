@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="768.0" prefWidth="952.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.AdminController">
+<BorderPane prefHeight="768.0" prefWidth="952.0" stylesheets="@../css/admin.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.AdminController">
    <top>
       <VBox prefHeight="89.0" prefWidth="952.0" BorderPane.alignment="CENTER">
          <children>
@@ -127,7 +127,7 @@
                         <TextField fx:id="txtPhone" editable="false" promptText="phone" />
                         <HBox alignment="CENTER_RIGHT" prefHeight="10.0" prefWidth="438.0">
                            <children>
-                              <Button fx:id="btnDeleteUser" disable="true" mnemonicParsing="false" onAction="#handleDeleteUser" text="delete user" />
+                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" text="delete user" />
                            </children>
                            <VBox.margin>
                               <Insets />
