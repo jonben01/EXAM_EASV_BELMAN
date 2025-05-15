@@ -87,6 +87,7 @@ public class PhotoDocController {
 
 private Node fillPhotoGrid(int pageIndex) {
     gridPhoto.getChildren().clear();
+
     if (!isProduct) {
         Label noImagesLabel = new Label("Switch to a product to see images");
         noImagesLabel.getStylesheets().add("/css/general.css");
@@ -129,43 +130,39 @@ private Node fillPhotoGrid(int pageIndex) {
 
     for (int i = startIndex; i < endIndex && i < imagesFromDatabase.size(); i++) {
         Photo photo = imagesFromDatabase.get(i);
-
         try {
             VBox imageContainer = new VBox();
-            imageContainer.setSpacing(5);
+            imageContainer.setSpacing(5); // Space between tags and image
+            imageContainer.setAlignment(Pos.CENTER);
 
-
-            // Create an ImageView for the photo
             ImageView imageView = new ImageView();
+
             if (Files.exists(Path.of(photo.getFilepath()))) {
-                // Display the image in the ImageView
                 Image image = new Image(new File(photo.getFilepath()).toURI().toString());
                 imageView.setImage(image);
 
-                // Bind ImageView size based on grid size
-                imageView.fitWidthProperty().bind(gridPhoto.widthProperty().divide(2.2)); // 2.2 to account for padding
-                imageView.fitHeightProperty().bind(gridPhoto.heightProperty().divide(3.2)); // 3.2 to account for padding
+                imageView.fitWidthProperty().bind(gridPhoto.widthProperty().divide(2.2));
+                imageView.fitHeightProperty().bind(gridPhoto.heightProperty().divide(3.2));
                 imageView.setPreserveRatio(true);
 
-                    GridPane.setMargin(imageView, new Insets(5));
+                GridPane.setMargin(imageView, new Insets(5));
 
-                    imageView.setOnMouseClicked(event -> handleImageClick(photo));
+                imageView.setOnMouseClicked(event -> handleImageClick(photo));
 
                 imageContainer.getChildren().add(imageView);
             } else {
-                // If the image is missing, display a placeholder
-                Label missingImageLabel = new Label("Image not found");
-                missingImageLabel.getStylesheets().add("/css/general.css");
-                missingImageLabel.getStyleClass().add("label-image");
+                Label tempLabel = new Label("Image not found");
+                tempLabel.getStylesheets().add("/css/general.css");
+                tempLabel.getStyleClass().add("label-image");
 
-                imageContainer.getChildren().add(missingImageLabel);
+                imageContainer.getChildren().add(tempLabel);
             }
 
             // Fetch and display tags for the photo
             try {
                 List<Tag> tags = new TagModel().getTagsForPhoto(photo);
                 if (!tags.isEmpty()) {
-                    // Create a label to display photo tags
+                    // Create a label to display the photo tags
                     String tagText = tags.stream()
                             .map(Tag::getName)
                             .reduce((tag1, tag2) -> tag1 + ", " + tag2)
@@ -174,34 +171,36 @@ private Node fillPhotoGrid(int pageIndex) {
                     Label tagLabel = new Label(tagText);
                     tagLabel.getStyleClass().add("photo-tag-label");
                     tagLabel.setMaxWidth(Double.MAX_VALUE);
-                    tagLabel.setMinSize(100,25); // Todo Fix this so it is based on how many tags it is
                     tagLabel.setWrapText(true);
                     tagLabel.setAlignment(Pos.CENTER);
-                    tagLabel.setTooltip(new Tooltip(tagText));
+                    tagLabel.setTooltip(new Tooltip(tagText)); // Display full tags in a tooltip
 
+                    // Add the tag label at the top of the VBox
                     imageContainer.getChildren().add(0, tagLabel); // Add tag label above the image
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            // Add the container (tag label + image) to the grid
+            // Add the container with the tags and image to the grid
             GridPane.setHalignment(imageContainer, HPos.CENTER);
             GridPane.setValignment(imageContainer, VPos.CENTER);
+            GridPane.setFillHeight(imageContainer, true);
+            GridPane.setFillWidth(imageContainer, true);
+
             gridPhoto.add(imageContainer, column, row);
 
-            // Adjust position for next image
             column++;
             if (column > 1) {
                 column = 0;
                 row++;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     return photoGridContainer;
+
 
 }
 
