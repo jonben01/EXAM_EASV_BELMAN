@@ -6,29 +6,91 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.LoginController">
-   <children>
-      <ImageView fitHeight="218.0" fitWidth="235.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../Images/BELMAN_Logo_264pxl.png" />
-         </image>
-      </ImageView>
-      <TextField fx:id="txtUsername" maxWidth="600.0" prefHeight="37.0" prefWidth="543.0" promptText="Username" stylesheets="@../css/general.css" VBox.vgrow="SOMETIMES">
+<BorderPane prefHeight="534.0" prefWidth="767.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.LoginController">
+   <center>
+      <StackPane fx:id="stackMain">
+         <children>
+            <VBox fx:id="vBoxUsername" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/general.css">
+               <children>
+                  <ImageView fitHeight="218.0" fitWidth="235.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/BELMAN_Logo_264pxl.png" />
+                     </image>
+                  </ImageView>
+                  <TextField fx:id="txtUsername" maxWidth="600.0" prefHeight="37.0" prefWidth="543.0" promptText="Username" stylesheets="@../css/general.css" VBox.vgrow="SOMETIMES">
+            
+                                 <VBox.margin>
+                        <Insets left="80.0" right="80.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <PasswordField fx:id="txtPassword" maxWidth="600.0" prefHeight="39.0" prefWidth="295.0" promptText="Password" styleClass="text-field" stylesheets="@../css/general.css" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets left="80.0" right="80.0" top="20.0" />
+                     </VBox.margin>
+                  </PasswordField>
+                  <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#handleLogin" prefHeight="25.0" prefWidth="164.0" stylesheets="@../css/general.css" text="Log in">
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+            <VBox fx:id="vBoxRFID" alignment="CENTER" prefHeight="459.0" prefWidth="745.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="RFID scanning is now enabled, please scan your RFID chip.">
+                     <font>
+                        <Font name="Arial" size="17.0" />
+                     </font>
+                  </Text>
+               </children>
+            </VBox>
+            <VBox fx:id="vBoxQR" alignment="CENTER" maxHeight="Infinity" maxWidth="Infinity" prefHeight="400.0" prefWidth="600.0">
 
-         <VBox.margin>
-            <Insets left="80.0" right="80.0" />
-         </VBox.margin></TextField>
-      <PasswordField fx:id="txtPassword" maxWidth="600.0" prefHeight="39.0" prefWidth="295.0" promptText="Password" styleClass="text-field" stylesheets="@../css/general.css" VBox.vgrow="ALWAYS">
-         <VBox.margin>
-            <Insets left="80.0" right="80.0" top="20.0" />
-         </VBox.margin>
-      </PasswordField>
-      <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#handleLogin" prefHeight="25.0" prefWidth="164.0" stylesheets="@../css/general.css" text="Log in">
-         <VBox.margin>
-            <Insets top="20.0" />
-         </VBox.margin>
-      </Button>
-   </children>
-</VBox>
+            <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Scan your QR code">
+                     <font>
+                        <Font name="Arial" size="17.0" />
+                     </font>
+                  </Text>
+                  <StackPane fx:id="stackCam" prefHeight="330.0" prefWidth="330.0">
+                     <children>
+                        <ImageView fx:id="imgCamera" fitHeight="330.0" fitWidth="330.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
+                     </children>
+                  </StackPane>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </center>
+   <top>
+      <HBox prefHeight="53.0" prefWidth="767.0" style="-fx-background-color: #004b88;" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="btnQR" mnemonicParsing="false" onAction="#handleQR" prefHeight="40.0" prefWidth="155.0" stylesheets="@../css/login.css" text="QR code">
+               <HBox.margin>
+                  <Insets left="20.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+            <Region prefHeight="54.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnUsername" mnemonicParsing="false" onAction="#handleUsername" prefHeight="40.0" prefWidth="155.0" stylesheets="@../css/login.css" text="Username">
+               <HBox.margin>
+                  <Insets top="10.0" />
+               </HBox.margin>
+            </Button>
+            <Region prefHeight="54.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnRFID" mnemonicParsing="false" onAction="#handleRFID" prefHeight="40.0" prefWidth="111.0" stylesheets="@../css/login.css" text="RFID">
+               <HBox.margin>
+                  <Insets right="20.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </top>
+</BorderPane>
