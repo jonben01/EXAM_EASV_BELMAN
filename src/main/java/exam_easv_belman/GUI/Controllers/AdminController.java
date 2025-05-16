@@ -6,6 +6,7 @@ import exam_easv_belman.GUI.Models.UserModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
+import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,7 +17,16 @@ import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.Comparator;
+import java.util.Random;
 import java.util.ResourceBundle;
+import javafx.animation.PauseTransition;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class AdminController implements Initializable {
     @FXML
@@ -86,6 +96,8 @@ public class AdminController implements Initializable {
             User newUser = controller.getResult();
             if (newUser != null) {
                 try {
+                    newUser.setQrKey(generateRandomString());
+                    showCopyableQRCode(newUser.getQrKey());
                     //making a new User object to make sure parity between the persisted data and what will be displayed.
                     User user = userModel.createUser(newUser);
                     lstUsers.getItems().add(user);
@@ -197,5 +209,57 @@ public class AdminController implements Initializable {
 
             }
         });
+    }
+
+    private String generateRandomString() {
+        //Lists all the possible symbols in generation:
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        //Randomly generates a length of the code between 15 and 45 characters.
+        int length = random.nextInt(30) + 15;
+        StringBuilder randomString = new StringBuilder();
+
+        //Builds the string:
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            randomString.append(characters.charAt(index));
+        }
+        // Modifies the string to give the generated string length + separator before the generated string.
+        // Generally used for debugging if any problems with the tickets should occur.
+        return length + "USER" + randomString.toString();
+
+    }
+
+    private void showCopyableQRCode(String qrKey) {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("QR Code");
+        dialog.setHeaderText("User's unique QR ID (Click to copy)");
+
+        // Create a copyable text field
+        TextField textField = new TextField(qrKey);
+        textField.setEditable(false);
+        textField.setPrefWidth(300);
+
+        // Create a copy button
+        Button copyButton = new Button("Copy to Clipboard");
+        copyButton.setOnAction(e -> {
+            textField.selectAll();
+            textField.copy();
+            // Show a brief confirmation
+            copyButton.setText("Copied!");
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(event -> copyButton.setText("Copy to Clipboard"));
+            pause.play();
+        });
+
+        // Create layout for dialog
+        VBox content = new VBox(10); // 10 is spacing between elements
+        content.getChildren().addAll(textField, copyButton);
+        content.setPadding(new Insets(10));
+
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+
+        dialog.showAndWait();
     }
 }

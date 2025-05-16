@@ -27,4 +27,8 @@ public class UserModel {
     public void deleteUser(User user) throws Exception {
         userManager.deleteUser(user);
     }
+
+    public User authenticateUser(String qrKey) throws Exception {
+        return userManager.authenticateUser(qrKey);
+    }
 }

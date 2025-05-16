@@ -198,13 +198,13 @@ public class LoginController implements Initializable {
 
                 if(!qrText.isEmpty()) {
                     Platform.runLater(() -> {
-                         handleQRLogin(qrText);
                         try {
-                            stopCameraPreview();
+                            handleQRLogin(qrText);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            AlertHelper.showAlert("Error", "could not shut down the camera.", Alert.AlertType.ERROR);
+                            AlertHelper.showAlert("Error", "Could not handle QRLogin (205)", Alert.AlertType.ERROR);
                         }
+
                     });
                 }
 
@@ -248,8 +248,14 @@ public class LoginController implements Initializable {
         vBoxUsername.setVisible(false);
     }
 
-    private void handleQRLogin(String qrCode) {
+    private void handleQRLogin(String qrCode) throws Exception {
+        stopCameraPreview();
         System.out.println("M-M-MORTY YOU LITLE SHIT! MORTY! I FOUND IT! ITS " + qrCode);
+        User user = userModel.authenticateUser(qrCode);
+        SessionManager.getInstance().setCurrentUser(user);
+        System.out.println(SessionManager.getInstance().getCurrentUser());
+        Navigator.getInstance().goTo(View.ORDER);
+
     }
         private void stopCameraPreview() {
             try

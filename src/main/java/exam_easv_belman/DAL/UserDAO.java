@@ -43,6 +43,7 @@ public class UserDAO implements IUserDataAccess {
                 user.setLastName(resultSet.getString("last_name"));
                 user.setEmail(resultSet.getString("email"));
                 user.setPhoneNumber(resultSet.getString("phone"));
+                user.setQrKey(resultSet.getString("qr_key"));
 
                 return user;
             }
@@ -56,8 +57,8 @@ public class UserDAO implements IUserDataAccess {
     @Override
     public User createUser(User user) throws Exception {
 
-        String sql = "INSERT INTO Users (username, password_hash, role_id, first_name, last_name, email, phone) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (username, password_hash, role_id, first_name, last_name, email, phone, qr_key) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = dbConnector.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -74,6 +75,7 @@ public class UserDAO implements IUserDataAccess {
             statement.setString(5, user.getLastName());
             statement.setString(6, user.getEmail());
             statement.setString(7, user.getPhoneNumber());
+            statement.setString(8, user.getQrKey());
 
             statement.executeUpdate();
 
@@ -132,6 +134,7 @@ public class UserDAO implements IUserDataAccess {
                 user.setLastName(resultSet.getString("last_name"));
                 user.setEmail(resultSet.getString("email"));
                 user.setPhoneNumber(resultSet.getString("phone"));
+                user.setQrKey(resultSet.getString("qr_key"));
                 users.add(user);
             }
             return users;
@@ -144,5 +147,36 @@ public class UserDAO implements IUserDataAccess {
     @Override
     public String getPassword() {
         return "";
+    }
+
+    @Override
+    public User findByQR(String qrKey) throws Exception {
+        String sql = "SELECT * FROM dbo.Users WHERE qr_key = ?";
+
+        try (Connection connection = dbConnector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, qrKey);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                User user = new User();
+
+                user.setId(resultSet.getInt("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setPassword(resultSet.getString("password_hash"));
+                user.setRole(resultSet.getInt("role_id") == 1 ? Role.ADMIN : resultSet.getInt("role_id") == 2 ? Role.OPERATOR : Role.QC);
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
+                user.setEmail(resultSet.getString("email"));
+                user.setPhoneNumber(resultSet.getString("phone"));
+                user.setQrKey(resultSet.getString("qr_key"));
+
+                return user;
+            }
+
+        } catch (SQLException e) {
+            throw new Exception();
+        }
+        return null;
     }
 }

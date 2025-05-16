@@ -12,6 +12,7 @@ public class User {
     private String lastName;
     private String email;
     private String phoneNumber;
+    private String qrKey;
 
     public User(int id, String username, String password, Role role) {
         this.id = id;
@@ -104,6 +105,16 @@ public class User {
         return role;
     }
 
+    public String getQrKey() {
+        return qrKey;
+    }
+
+    public void setQrKey(String qrKey) {
+        this.qrKey = qrKey;
+    }
+
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -116,5 +127,8 @@ public class User {
         return Objects.hash(id);
     }
 
-
+    @Override
+    public String toString() {
+        return "Name: " + firstName + " " + lastName + ". Username: " + username;
+    }
 }
