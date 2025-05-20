@@ -64,4 +64,8 @@ public class UserManager {
     public void deleteUser(User user) {
         userDAO.deleteUser(user);
     }
+
+    public void attachSignatur(User user) throws Exception {
+        userDAO.attachSignatur(user);
+    }
 }

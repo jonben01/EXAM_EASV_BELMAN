@@ -14,8 +14,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -53,6 +58,8 @@ public class AdminController implements Initializable {
     public TextField txtPhone;
     @FXML
     public Label lblCurrentUser;
+    @FXML
+    private Button btnSignatur;
 
     private UserModel userModel;
     private User selectedUser;
@@ -80,6 +87,19 @@ public class AdminController implements Initializable {
         lstUsers.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             setUserInfo(newValue);
         });
+
+        lstUsers.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                selectedUser = newSelection;
+                // Show or hide the signature button based on role
+                btnSignatur.setVisible(selectedUser.getRole() == Role.QC);
+            } else {
+                btnSignatur.setVisible(false);
+            }
+        });
+
+        btnSignatur.setVisible(false);
+
     }
 
     @FXML
@@ -111,7 +131,7 @@ public class AdminController implements Initializable {
         }
     }
 
-    private void setUserInfo(User  selectedUser) {
+    private void setUserInfo(User selectedUser) {
         if (selectedUser != null) {
             this.selectedUser = selectedUser;
             txtUsername.setText(selectedUser.getUsername());
@@ -127,6 +147,7 @@ public class AdminController implements Initializable {
     public void handleDeleteUser(ActionEvent actionEvent) {
         User selectedUser = lstUsers.getSelectionModel().getSelectedItem();
         if (selectedUser == null) {
+            //TODO Brug AlertHelper
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No User Selected");
             alert.setHeaderText("Please select a user to delete.");
@@ -136,6 +157,7 @@ public class AdminController implements Initializable {
         }
 
         // Confirm deletion
+        //TODO Brug AlertHelper
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmationAlert.setTitle("Delete User");
         confirmationAlert.setHeaderText("Are you sure you want to delete this user?");
@@ -152,6 +174,7 @@ public class AdminController implements Initializable {
                 e.printStackTrace();
 
                 // Show an error alert
+                //TODO Brug AlertHelper
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
                 errorAlert.setTitle("Error");
                 errorAlert.setHeaderText("Unable to Delete User");
@@ -262,4 +285,49 @@ public class AdminController implements Initializable {
 
         dialog.showAndWait();
     }
+
+    public void handleSetSignatur(ActionEvent actionEvent) throws IOException {
+        if (selectedUser != null && selectedUser.getRole() == Role.QC) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select Signature File");
+
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("PNG Files", "*.png")
+            );
+
+            File selectedFile = fileChooser.showOpenDialog(btnSignatur.getScene().getWindow());
+            if (selectedFile != null) {
+                Path source = selectedFile.toPath();
+
+                String projectDir = System.getProperty("user.dir");
+                Path destination = Path.of(projectDir, "src/main/resources/Images/Signatur", selectedFile.getName());
+
+                Files.createDirectories(destination.getParent());
+
+                Files.copy(source, destination, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+                String signaturPath = "src/main/resources/Images/Signatur/" + selectedFile.getName();
+                selectedUser.setSignaturePath(signaturPath);
+
+                try {
+                    UserModel userModel = new UserModel();
+                    userModel.attachSignatur(selectedUser);
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Success");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Signature has been successfully set!");
+                    alert.showAndWait();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Failed to save the signature: " + e.getMessage());
+                    alert.showAndWait();
+                }
+            }
+        }
+    }
 }
+

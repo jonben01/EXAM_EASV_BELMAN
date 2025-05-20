@@ -127,6 +127,11 @@
                         <TextField fx:id="txtPhone" editable="false" promptText="phone" />
                         <HBox alignment="CENTER_RIGHT" prefHeight="10.0" prefWidth="438.0">
                            <children>
+                              <Button fx:id="btnSignatur" mnemonicParsing="false" onAction="#handleSetSignatur" text="Assign Signatur" visible="false">
+                                 <HBox.margin>
+                                    <Insets right="20.0" />
+                                 </HBox.margin>
+                              </Button>
                               <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" text="delete user" />
                            </children>
                            <VBox.margin>

@@ -43,6 +43,8 @@ public class UserDAO implements IUserDataAccess {
                 user.setLastName(resultSet.getString("last_name"));
                 user.setEmail(resultSet.getString("email"));
                 user.setPhoneNumber(resultSet.getString("phone"));
+                user.setSignaturePath(resultSet.getString("signature_path"));
+
                 user.setQrKey(resultSet.getString("qr_key"));
 
                 return user;
@@ -57,8 +59,9 @@ public class UserDAO implements IUserDataAccess {
     @Override
     public User createUser(User user) throws Exception {
 
-        String sql = "INSERT INTO Users (username, password_hash, role_id, first_name, last_name, email, phone, qr_key) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (username, password_hash, role_id, first_Name, last_Name," +
+                "email, phone, qr_key, signature_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
 
         try (Connection connection = dbConnector.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -76,6 +79,8 @@ public class UserDAO implements IUserDataAccess {
             statement.setString(6, user.getEmail());
             statement.setString(7, user.getPhoneNumber());
             statement.setString(8, user.getQrKey());
+            statement.setString(9, user.getSignaturePath());
+
 
             statement.executeUpdate();
 
@@ -143,6 +148,22 @@ public class UserDAO implements IUserDataAccess {
             throw new Exception(e);
         }
     }
+
+   public void attachSignatur(User user) throws Exception {
+        String sql = "UPDATE Users SET signature_path = ? WHERE id = ?";
+
+       try (Connection connection = dbConnector.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+           statement.setString(1,user.getSignaturePath());
+           statement.setInt(2, user.getId());
+           statement.executeUpdate();
+       } catch (Exception e) {
+           AlertHelper.showAlert("Error", "Error attaching signature", Alert.AlertType.ERROR);
+           e.printStackTrace();
+       }
+
+   }
 
     @Override
     public String getPassword() {
