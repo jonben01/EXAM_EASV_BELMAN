@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -59,6 +60,7 @@ public class CameraController implements Initializable {
 
     private ScheduledExecutorService mainPreviewExecutor;
     private PhotoStrategy strategy;
+    private boolean isPreview = false;
 
     private final ArrayDeque<Image> gallery = new ArrayDeque<>();
     private PhotoModel photoModel;
@@ -242,6 +244,7 @@ public class CameraController implements Initializable {
     }
 
     private void openOverlayPreview(int i) {
+        isPreview = true;
         Image[] images = gallery.toArray(new Image[0]);
         if (i < images.length) {
             imgFullPreview.setImage(images[i]);
@@ -287,6 +290,7 @@ public class CameraController implements Initializable {
     }
 
     public void closePreview() {
+        isPreview = false;
         imgFullPreview.setVisible(false);
         previewControls.setVisible(false);
         btnFinish.setVisible(true);
@@ -297,6 +301,12 @@ public class CameraController implements Initializable {
 
     @FXML
     public void handleCaptureImage(ActionEvent actionEvent) {
+        captureImage();
+    }
+
+    @FXML
+    private void handlePressImage(MouseEvent mouseEvent) {
+        if(!isPreview)
         captureImage();
     }
 }

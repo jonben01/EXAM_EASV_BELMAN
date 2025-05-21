@@ -39,6 +39,8 @@ public class SendViewController implements Initializable {
     private OrderModel orderModel;
 
     private Gmailer gMailer;
+    @FXML
+    private Button btnLog;
 
     public void setOrderNumber(String orderNumber) throws Exception {
         if (orderModel == null) {
@@ -66,9 +68,12 @@ public class SendViewController implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Image img = new Image(getClass().getResourceAsStream("/images/icon-log.png"));
+        Image img = new Image(getClass().getResourceAsStream("/images/icon-back.png"));
         ImageView imgView = new ImageView(img);
         btnPrev.setGraphic(imgView);
+        img = new Image(getClass().getResourceAsStream("/images/icon-log.png"));
+        imgView = new ImageView(img);
+        btnLog.setGraphic(imgView);
     }
 
     public void handleReturn(ActionEvent actionEvent) {
@@ -123,5 +128,18 @@ public class SendViewController implements Initializable {
         System.out.println("File deleted: " + deleted);
 
 
+    }
+
+    @FXML
+    private void handleLog(ActionEvent actionEvent) {
+        try {
+            AlertHelper.showConfirmationAlert("Log out?", "Are you sure you wish to log out?", () -> {
+                Navigator.getInstance().goTo(View.LOGIN);
+                SessionManager.getInstance().logout();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertHelper.showAlert("Error", "Failed to load LoginView", Alert.AlertType.ERROR);
+        }
     }
 }

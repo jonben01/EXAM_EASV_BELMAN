@@ -310,6 +310,7 @@ private void handleImageClick(Photo photo) {
                     SessionManager.getInstance().setIsProduct(true);
                     SessionManager.getInstance().setCurrentProductNumber(product.getProduct_number());
                     setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                    btnOpenCamera.setDisable(false);
                 } catch (Exception e) {
                     AlertHelper.showAlert("Error", "Failed to load PhotoDocView (PopulateMenu)", Alert.AlertType.ERROR);
                     e.printStackTrace();
