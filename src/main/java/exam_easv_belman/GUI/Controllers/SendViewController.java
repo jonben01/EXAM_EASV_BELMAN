@@ -1,7 +1,9 @@
 package exam_easv_belman.GUI.Controllers;
 
+import exam_easv_belman.BLL.QCReportManager;
 import exam_easv_belman.BLL.util.Gmailer;
 import exam_easv_belman.BLL.util.PdfGeneratorUtil;
+import exam_easv_belman.BLL.util.PdfPreviewUtil;
 import exam_easv_belman.GUI.Models.OrderModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class SendViewController implements Initializable {
@@ -100,9 +103,33 @@ public class SendViewController implements Initializable {
     }
 
     public void handlePreview(ActionEvent actionEvent) throws Exception {
+        /*
         File pdfFile = new File("src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf");
         Stage stage = (Stage) txtOrderNumber.getScene().getWindow(); // Get current stage
         PdfGeneratorUtil.generatePdf(pdfFile.getAbsolutePath(), txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), true, stage);
+         */
+        try {
+            // Define the file path for the PDF
+            String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + "_Preview.pdf";
+            File pdfFile = new File(filePath);
+
+            // Generate the PDF using QCReportManager
+            QCReportManager qcReportManager = new QCReportManager();
+            qcReportManager.generateQCReportPDF(
+                    filePath,
+                    txtEmail.getText(),
+                    txtComment.getText(),
+                    (Stage) txtOrderNumber.getScene().getWindow()
+            );
+
+            // Open the preview using PdfPreviewUtil
+            PdfPreviewUtil.showPdfPreview(pdfFile, (Stage) txtOrderNumber.getScene().getWindow());
+
+        } catch (Exception e) {
+            AlertHelper.showAlert("Error", "Failed to preview the PDF: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -118,16 +145,27 @@ public class SendViewController implements Initializable {
         String filePath = "src/main/resources/Images/" + txtOrderNumber.getText() + ".pdf";
         File generatedPDF = new File(filePath);
 
-        Stage stage = (Stage) txtOrderNumber.getScene().getWindow();
+        QCReportManager qcReportManager = new QCReportManager();
+        qcReportManager.generateQCReportPDF(
+                filePath,
+                txtEmail.getText(),
+                txtComment.getText(),
+                (Stage) txtOrderNumber.getScene().getWindow()
+        );
 
-        PdfGeneratorUtil.generatePdf(filePath, txtEmail.getText(), txtComment.getText(), txtOrderNumber.getText(), false, stage);
-        orderModel.addCommentToOrder(txtComment.getText(), txtOrderNumber.getText());
-        gMailer.sendMail(txtOrderNumber.getText(), "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: " + txtOrderNumber.getText(),txtEmail.getText(), generatedPDF);
 
+        // Send the mail with the generated PDF attached
+        gMailer.sendMail(
+                txtOrderNumber.getText(),
+                "This email contains a quality control report as per request by the client.\nThis Quality Control report is centered around the order: "
+                        + txtOrderNumber.getText(),
+                txtEmail.getText(),
+                generatedPDF
+        );
+
+        // Delete the generated PDF after sending the email
         boolean deleted = generatedPDF.delete();
         System.out.println("File deleted: " + deleted);
-
-
     }
 
     @FXML

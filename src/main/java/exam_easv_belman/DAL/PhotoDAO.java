@@ -5,6 +5,7 @@ import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.util.AlertHelper;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -25,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PhotoDAO implements IPhotoDataAccess{
@@ -207,8 +209,46 @@ public class PhotoDAO implements IPhotoDataAccess{
     @Override
     public ObservableList<Photo> getImagesForOrder(String orderNumber) throws SQLException {
         //todo: make this??
-        return null;
+        ObservableList<Photo> photos = FXCollections.observableArrayList();
+
+        // Query database for photos matching the order number
+        String query = "SELECT * FROM Photos WHERE OrderNumber LIKE ?"; // Partial match for 'orderNumber' prefix
+        try (Connection connection = dbConnector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, orderNumber + "%"); // Match all products related to the given order
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Photo photo = new Photo();
+                photo.setId(rs.getInt("Id"));
+                photo.setOrderNumber(rs.getString("OrderNumber"));
+                photo.setFilepath(rs.getString("Filepath"));
+                photo.setUploadedBy(rs.getInt("UploadedBy"));
+                photo.setUploadTime(rs.getTimestamp("UploadTime").toLocalDateTime());
+                photo.setComment(rs.getString("Comment"));
+
+                photos.add(photo);
+            }
+        }
+
+        // Sort photos by product number extracted from the order number
+        return photos.stream()
+                .sorted(Comparator.comparing(photo -> extractProductNumber(photo.getOrderNumber())))
+                .collect(Collectors.toCollection(FXCollections::observableArrayList));
     }
+
+    private int extractProductNumber(String orderNumber) {
+        try {
+
+            String[] parts = orderNumber.split("-");
+            return Integer.parseInt(parts[parts.length - 1]);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Integer.MAX_VALUE;
+        }
+    }
+
+
 
     @Override
     public Product getProductFromNumber(String productNumber) throws SQLException {
