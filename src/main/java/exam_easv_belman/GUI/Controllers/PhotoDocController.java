@@ -150,7 +150,7 @@ private void handleImageClick(Photo photo) {
             String productIdentifier = productNumber.substring(productNumber.lastIndexOf("-")+1);
             btnProduct.setText(productIdentifier);
             imagesFromDatabase = photoModel.getImagesForProduct(SessionManager.getInstance().getCurrentProductNumber());
-            
+            additionalImagesFromDatabase.clear();
             for(Photo photo : imagesFromDatabase)
             {
                 if(java.util.Objects.equals(photo.getTag(), "Additional"))
@@ -275,8 +275,7 @@ private void handleImageClick(Photo photo) {
 
         for (int i = 0; i < 5; i++) {
             Photo photo = getPhotoWithTag(tagIndex);
-            VBox imageContainer = new VBox();
-            imageContainer.setSpacing(5); // Space between tags and image
+            StackPane imageContainer = new StackPane();
             imageContainer.setAlignment(Pos.CENTER);
             ImageView imageView = new ImageView();
 
@@ -292,8 +291,6 @@ private void handleImageClick(Photo photo) {
                 GridPane.setMargin(imageView, new Insets(5));
                 String tag = tagOrder[tagIndex];
 
-                imageView.setOnMouseClicked(event -> handleEmptyImage(tag));
-
                 imageContainer.getChildren().add(imageView);
 
                 // Add the container with the tags and image to the grid
@@ -301,6 +298,23 @@ private void handleImageClick(Photo photo) {
                 GridPane.setValignment(imageContainer, VPos.CENTER);
                 GridPane.setFillHeight(imageContainer, true);
                 GridPane.setFillWidth(imageContainer, true);
+
+                VBox labelContainer = new VBox();
+                labelContainer.setAlignment(Pos.BOTTOM_CENTER);
+                labelContainer.setPadding(new Insets(0,0,6,0));
+
+                Label tagLabel = new Label(tagOrder[tagIndex]);
+                tagLabel.getStylesheets().add("/css/photoDoc.css");
+                tagLabel.getStyleClass().add("photo-tag-label");
+                tagLabel.setAlignment(Pos.CENTER);
+                tagLabel.setMinWidth(100);
+                tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
+                labelContainer.setOnMouseClicked(event -> handleEmptyImage(tag));
+
+                labelContainer.getChildren().add(tagLabel);
+
+                imageContainer.getChildren().add(labelContainer);
+                StackPane.setAlignment(tagLabel, Pos.BOTTOM_CENTER);
 
                 gridPhoto.add(imageContainer, column, row);
 
@@ -316,8 +330,6 @@ private void handleImageClick(Photo photo) {
 
                         GridPane.setMargin(imageView, new Insets(5));
 
-                        imageView.setOnMouseClicked(event -> handleImageClick(photo));
-
                         imageContainer.getChildren().add(imageView);
                     } else {
                         Label tempLabel = new Label("Image not found");
@@ -331,6 +343,24 @@ private void handleImageClick(Photo photo) {
                     GridPane.setValignment(imageContainer, VPos.CENTER);
                     GridPane.setFillHeight(imageContainer, true);
                     GridPane.setFillWidth(imageContainer, true);
+
+                    VBox labelContainer = new VBox();
+                    labelContainer.setAlignment(Pos.BOTTOM_CENTER);
+                    labelContainer.setPadding(new Insets(0,0,6,0));
+
+                    Label tagLabel = new Label(tagOrder[tagIndex]);
+                    tagLabel.getStylesheets().add("/css/photoDoc.css");
+                    tagLabel.getStyleClass().add("photo-tag-label");
+                    tagLabel.setAlignment(Pos.CENTER);
+                    tagLabel.setMinWidth(100);
+                    tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
+
+                    labelContainer.setOnMouseClicked(event -> handleImageClick(photo));
+
+                    labelContainer.getChildren().add(tagLabel);
+
+                    imageContainer.getChildren().add(labelContainer);
+                    StackPane.setAlignment(tagLabel, Pos.BOTTOM_CENTER);
 
                     gridPhoto.add(imageContainer, column, row);
 
@@ -346,8 +376,7 @@ private void handleImageClick(Photo photo) {
                 row++;
             }
         }
-            VBox imageContainer = new VBox();
-            imageContainer.setSpacing(5); // Space between tags and image
+            StackPane imageContainer = new StackPane();
             imageContainer.setAlignment(Pos.CENTER);
             ImageView imageView = new ImageView();
             System.out.println("CREATING ADDITIONAL BUTTON");
@@ -361,7 +390,6 @@ private void handleImageClick(Photo photo) {
             GridPane.setMargin(imageView, new Insets(5));
             String tag = tagOrder[tagIndex];
 
-            imageView.setOnMouseClicked(event -> handleEmptyImage(tag));
 
             imageContainer.getChildren().add(imageView);
 
@@ -371,6 +399,20 @@ private void handleImageClick(Photo photo) {
             GridPane.setFillHeight(imageContainer, true);
             GridPane.setFillWidth(imageContainer, true);
 
+        VBox labelContainer = new VBox();
+        labelContainer.setAlignment(Pos.BOTTOM_CENTER);
+        labelContainer.setPadding(new Insets(0,0,6,0));
+
+        Label tagLabel = new Label(tagOrder[tagIndex]);
+        tagLabel.getStylesheets().add("/css/photoDoc.css");
+        tagLabel.getStyleClass().add("photo-tag-label");
+        tagLabel.setAlignment(Pos.CENTER);
+        tagLabel.setMinWidth(100);
+        tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
+        labelContainer.setOnMouseClicked(event -> handleEmptyImage(tag));
+
+        labelContainer.getChildren().add(tagLabel);
+        imageContainer.getChildren().add(labelContainer);
             gridPhoto.add(imageContainer, column, row);
         return photoGridContainer;
     }
@@ -390,8 +432,8 @@ private void handleImageClick(Photo photo) {
         for (int i = startIndex; i < endIndex; i++) {
             Photo photo = additionalImagesFromDatabase.get(i);
 
-            VBox imageContainer = new VBox();
-            imageContainer.setSpacing(5); // Space between tags and image
+            StackPane imageContainer = new StackPane();
+            // imageContainer.setSpacing(5); // Space between tags and image
             imageContainer.setAlignment(Pos.CENTER);
             ImageView imageView = new ImageView();
 
@@ -405,8 +447,6 @@ private void handleImageClick(Photo photo) {
                     imageView.setPreserveRatio(true);
 
                     GridPane.setMargin(imageView, new Insets(5));
-
-                    imageView.setOnMouseClicked(event -> handleImageClick(photo));
 
                     imageContainer.getChildren().add(imageView);
                 } else {
@@ -422,6 +462,23 @@ private void handleImageClick(Photo photo) {
                 GridPane.setFillHeight(imageContainer, true);
                 GridPane.setFillWidth(imageContainer, true);
 
+                VBox labelContainer = new VBox();
+                labelContainer.setAlignment(Pos.BOTTOM_CENTER);
+                labelContainer.setPadding(new Insets(0,0,6,0));
+
+                Label tagLabel = new Label("Additional");
+                tagLabel.getStylesheets().add("/css/photoDoc.css");
+                tagLabel.getStyleClass().add("photo-tag-label");
+                tagLabel.setAlignment(Pos.CENTER);
+                tagLabel.setMinWidth(100);
+                tagLabel.prefWidthProperty().bind(imageView.fitWidthProperty().divide(2.2));
+                labelContainer.setOnMouseClicked(event -> handleImageClick(photo));
+
+                labelContainer.getChildren().add(tagLabel);
+
+                imageContainer.getChildren().add(labelContainer);
+                StackPane.setAlignment(tagLabel, Pos.BOTTOM_CENTER);
+
                 gridPhoto.add(imageContainer, column, row);
 
             } catch (Exception e) {
@@ -436,7 +493,7 @@ private void handleImageClick(Photo photo) {
         }
         return photoGridContainer;
     }
-    
+
     private Node fillPhotoGrid(int pageIndex) {
         gridPhoto.getChildren().clear();
 
