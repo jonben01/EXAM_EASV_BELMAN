@@ -17,17 +17,15 @@ public interface IPhotoDataAccess {
     //TODO add the mandatory methods that have been implemented in PhotoDAO
 
 
-    void insertImagePathToDatabase(Connection connection, List<Path> filePath, User uploader, Product product, String tag) throws SQLException;
+    void insertImagePathToDatabase(Connection connection, List<Path> filePath, User uploader, Product product) throws SQLException;
 
     void deleteImageFromDatabase(Photo photo) throws SQLException;
 
-    boolean saveImageAndPath(List<BufferedImage> photos, List<String> fileNames, User uploader, String productNumber, String tag) throws Exception;
+    boolean saveImageAndPath(List<BufferedImage> photos, List<String> fileNames, User uploader, String productNumber) throws Exception;
 
     ObservableList<Photo> getImagesForProduct(String productNumber) throws SQLException;
 
     ObservableList<Photo> getImagesForOrder(String orderNumber) throws SQLException;
 
     Product getProductFromNumber(String photoNumber) throws SQLException;
-
-    void addCommentToPhoto(String comment, Photo photo) throws SQLException;
 }

@@ -6,7 +6,6 @@ import exam_easv_belman.GUI.Models.UserModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
-import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,24 +13,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.Random;
 import java.util.ResourceBundle;
-import javafx.animation.PauseTransition;
-import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 public class AdminController implements Initializable {
     @FXML
@@ -58,8 +43,6 @@ public class AdminController implements Initializable {
     public TextField txtPhone;
     @FXML
     public Label lblCurrentUser;
-    @FXML
-    private Button btnSignatur;
 
     private UserModel userModel;
     private User selectedUser;
@@ -77,7 +60,7 @@ public class AdminController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         populateUserList();
-        //lblCurrentUser.setText(SessionManager.getInstance().getCurrentUser().getUsername());
+        lblCurrentUser.setText(SessionManager.getInstance().getCurrentUser().getUsername());
 
         if (lstUsers.getItems() != null) {
             lstUsers.getSelectionModel().select(0);
@@ -87,19 +70,6 @@ public class AdminController implements Initializable {
         lstUsers.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             setUserInfo(newValue);
         });
-
-        lstUsers.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                selectedUser = newSelection;
-                // Show or hide the signature button based on role
-                btnSignatur.setVisible(selectedUser.getRole() == Role.QC);
-            } else {
-                btnSignatur.setVisible(false);
-            }
-        });
-
-        btnSignatur.setVisible(false);
-
     }
 
     @FXML
@@ -116,8 +86,6 @@ public class AdminController implements Initializable {
             User newUser = controller.getResult();
             if (newUser != null) {
                 try {
-                    newUser.setQrKey(generateRandomString());
-                    showCopyableQRCode(newUser.getQrKey());
                     //making a new User object to make sure parity between the persisted data and what will be displayed.
                     User user = userModel.createUser(newUser);
                     lstUsers.getItems().add(user);
@@ -131,7 +99,7 @@ public class AdminController implements Initializable {
         }
     }
 
-    private void setUserInfo(User selectedUser) {
+    private void setUserInfo(User  selectedUser) {
         if (selectedUser != null) {
             this.selectedUser = selectedUser;
             txtUsername.setText(selectedUser.getUsername());
@@ -145,44 +113,6 @@ public class AdminController implements Initializable {
 
     @FXML
     public void handleDeleteUser(ActionEvent actionEvent) {
-        User selectedUser = lstUsers.getSelectionModel().getSelectedItem();
-        if (selectedUser == null) {
-            //TODO Brug AlertHelper
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("No User Selected");
-            alert.setHeaderText("Please select a user to delete.");
-            alert.setContentText("You must select a user from the list before deleting.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Confirm deletion
-        //TODO Brug AlertHelper
-        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmationAlert.setTitle("Delete User");
-        confirmationAlert.setHeaderText("Are you sure you want to delete this user?");
-        confirmationAlert.setContentText("User: " + selectedUser.getUsername());
-
-        if (confirmationAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            try {
-                // Delete the user using the model
-                userModel.deleteUser(selectedUser);
-
-                // Refresh the user list
-                populateUserList();
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                // Show an error alert
-                //TODO Brug AlertHelper
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setTitle("Error");
-                errorAlert.setHeaderText("Unable to Delete User");
-                errorAlert.setContentText("An error occurred while attempting to delete the user.");
-                errorAlert.showAndWait();
-            }
-        }
-
     }
 
     private void populateUserList() {
@@ -233,101 +163,4 @@ public class AdminController implements Initializable {
             }
         });
     }
-
-    private String generateRandomString() {
-        //Lists all the possible symbols in generation:
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        Random random = new Random();
-        //Randomly generates a length of the code between 15 and 45 characters.
-        int length = random.nextInt(30) + 15;
-        StringBuilder randomString = new StringBuilder();
-
-        //Builds the string:
-        for (int i = 0; i < length; i++) {
-            int index = random.nextInt(characters.length());
-            randomString.append(characters.charAt(index));
-        }
-        // Modifies the string to give the generated string length + separator before the generated string.
-        // Generally used for debugging if any problems with the tickets should occur.
-        return length + "USER" + randomString.toString();
-
-    }
-
-    private void showCopyableQRCode(String qrKey) {
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("QR Code");
-        dialog.setHeaderText("User's unique QR ID (Click to copy)");
-
-        // Create a copyable text field
-        TextField textField = new TextField(qrKey);
-        textField.setEditable(false);
-        textField.setPrefWidth(300);
-
-        // Create a copy button
-        Button copyButton = new Button("Copy to Clipboard");
-        copyButton.setOnAction(e -> {
-            textField.selectAll();
-            textField.copy();
-            // Show a brief confirmation
-            copyButton.setText("Copied!");
-            PauseTransition pause = new PauseTransition(Duration.seconds(2));
-            pause.setOnFinished(event -> copyButton.setText("Copy to Clipboard"));
-            pause.play();
-        });
-
-        // Create layout for dialog
-        VBox content = new VBox(10); // 10 is spacing between elements
-        content.getChildren().addAll(textField, copyButton);
-        content.setPadding(new Insets(10));
-
-        dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
-
-        dialog.showAndWait();
-    }
-
-    public void handleSetSignatur(ActionEvent actionEvent) throws IOException {
-        if (selectedUser != null && selectedUser.getRole() == Role.QC) {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Select Signature File");
-
-            fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("PNG Files", "*.png")
-            );
-
-            File selectedFile = fileChooser.showOpenDialog(btnSignatur.getScene().getWindow());
-            if (selectedFile != null) {
-                Path source = selectedFile.toPath();
-
-                String projectDir = System.getProperty("user.dir");
-                Path destination = Path.of(projectDir, "src/main/resources/Images/Signatur", selectedFile.getName());
-
-                Files.createDirectories(destination.getParent());
-
-                Files.copy(source, destination, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-                String signaturPath = "src/main/resources/Images/Signatur/" + selectedFile.getName();
-                selectedUser.setSignaturePath(signaturPath);
-
-                try {
-                    UserModel userModel = new UserModel();
-                    userModel.attachSignatur(selectedUser);
-
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Success");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Signature has been successfully set!");
-                    alert.showAndWait();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Failed to save the signature: " + e.getMessage());
-                    alert.showAndWait();
-                }
-            }
-        }
-    }
 }
-

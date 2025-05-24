@@ -5,7 +5,6 @@ import exam_easv_belman.BE.Photo;
 import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.GUI.util.AlertHelper;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -26,7 +25,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PhotoDAO implements IPhotoDataAccess{
@@ -45,8 +43,7 @@ public class PhotoDAO implements IPhotoDataAccess{
     public boolean saveImageAndPath(List<BufferedImage> photos,
                                     List<String> fileNames,
                                     User uploader,
-                                    String productNumber,
-                                    String tag) throws Exception {
+                                    String productNumber) throws Exception {
 
         //check if the lists are of the same size, if not throw an exception.
         if (photos.size() != fileNames.size()) {
@@ -62,7 +59,7 @@ public class PhotoDAO implements IPhotoDataAccess{
             Path orderFolderPath = baseRelativePath.resolve(productNumber + "_Images");
             persistedPaths = saveImages(photos, fileNames, orderFolderPath);
 
-            insertImagePathToDatabase(connection, persistedPaths, uploader, getProductFromNumber(productNumber), tag);
+            insertImagePathToDatabase(connection, persistedPaths, uploader, getProductFromNumber(productNumber));
 
             connection.commit();
             return true;
@@ -165,10 +162,9 @@ public class PhotoDAO implements IPhotoDataAccess{
     public void insertImagePathToDatabase(Connection connection,
                                           List<Path> filePaths,
                                           User uploader,
-                                          Product product,
-                                          String tag) throws SQLException {
+                                          Product product) throws SQLException {
 
-        String sql = "INSERT INTO Photos (product_id, file_path, uploaded_by, uploaded_at, tag) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Photos (product_id, file_path, uploaded_by, uploaded_at) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             for (Path path : filePaths) {
@@ -176,7 +172,6 @@ public class PhotoDAO implements IPhotoDataAccess{
                 statement.setString(2, path.toString());
                 statement.setInt(3, uploader.getId());
                 statement.setObject(4, LocalDateTime.now());
-                statement.setString(5, tag);
                 statement.addBatch();
             }
             statement.executeBatch();
@@ -201,8 +196,6 @@ public class PhotoDAO implements IPhotoDataAccess{
                 tempImg.setFilepath(rs.getString("file_path"));
                 tempImg.setUploadedBy(rs.getInt("uploaded_by"));
                 tempImg.setUploadTime(rs.getObject("uploaded_at", LocalDateTime.class));
-                tempImg.setComment(rs.getString("comment"));
-                tempImg.setTag(rs.getString("tag"));
                 photos.add(tempImg);
             }
             System.out.println("length:" + photos.size());
@@ -213,46 +206,8 @@ public class PhotoDAO implements IPhotoDataAccess{
     @Override
     public ObservableList<Photo> getImagesForOrder(String orderNumber) throws SQLException {
         //todo: make this??
-        ObservableList<Photo> photos = FXCollections.observableArrayList();
-
-        // Query database for photos matching the order number
-        String query = "SELECT * FROM Photos WHERE OrderNumber LIKE ?"; // Partial match for 'orderNumber' prefix
-        try (Connection connection = dbConnector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, orderNumber + "%"); // Match all products related to the given order
-            ResultSet rs = statement.executeQuery();
-
-            while (rs.next()) {
-                Photo photo = new Photo();
-                photo.setId(rs.getInt("Id"));
-                photo.setOrderNumber(rs.getString("OrderNumber"));
-                photo.setFilepath(rs.getString("Filepath"));
-                photo.setUploadedBy(rs.getInt("UploadedBy"));
-                photo.setUploadTime(rs.getTimestamp("UploadTime").toLocalDateTime());
-                photo.setComment(rs.getString("Comment"));
-
-                photos.add(photo);
-            }
-        }
-
-        // Sort photos by product number extracted from the order number
-        return photos.stream()
-                .sorted(Comparator.comparing(photo -> extractProductNumber(photo.getOrderNumber())))
-                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+        return null;
     }
-
-    private int extractProductNumber(String orderNumber) {
-        try {
-
-            String[] parts = orderNumber.split("-");
-            return Integer.parseInt(parts[parts.length - 1]);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Integer.MAX_VALUE;
-        }
-    }
-
-
 
     @Override
     public Product getProductFromNumber(String productNumber) throws SQLException {
@@ -269,17 +224,6 @@ public class PhotoDAO implements IPhotoDataAccess{
             return product;
         }
 
-    }
-
-    @Override
-    public void addCommentToPhoto(String comment, Photo photo) throws SQLException {
-        String sql = "UPDATE Photos SET comment = ? WHERE id = ?";
-        try(Connection conn = dbConnector.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)){
-            ps.setString(1, comment);
-            ps.setInt(2, photo.getId());
-            ps.executeUpdate();
-            System.out.println("comment added to photo with id " + photo.getId());
-        }
     }
 
     @Override

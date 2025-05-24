@@ -1,6 +1,5 @@
 package exam_easv_belman.GUI.Controllers;
 
-import com.google.common.base.Objects;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.OpenCVStrategy;
 import exam_easv_belman.BLL.PhotoStrategy;
@@ -17,7 +16,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -61,28 +59,23 @@ public class CameraController implements Initializable {
 
     private ScheduledExecutorService mainPreviewExecutor;
     private PhotoStrategy strategy;
-    private boolean isPreview = false;
 
     private final ArrayDeque<Image> gallery = new ArrayDeque<>();
     private PhotoModel photoModel;
     private List<BufferedImage> imagesToSave = new ArrayList<>();
     private String productNumber;
     private int currentPreviewIndex = -1;
-    private String tag;
 
     public CameraController() {
         photoModel = new PhotoModel();
     }
 
-    public void setTag(String tag)
-    {
-        this.tag = tag;
+    public void setProductNumber(String productNumber) {
+        this.productNumber = productNumber;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        productNumber = SessionManager.getInstance().getCurrentProductNumber();
 
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(cameraStackPane.widthProperty());
@@ -167,12 +160,6 @@ public class CameraController implements Initializable {
             imagesToSave.add(bImage);
             btnFinish.setDisable(false);
 
-            if(!java.util.Objects.equals(tag, "Additional"))
-            {
-                openOverlayPreview(0);
-            }
-
-
 
             //TODO 1. store image in a list, could be done through the sendToGallery method.
 
@@ -208,7 +195,7 @@ public class CameraController implements Initializable {
         }
         User currentUser = SessionManager.getInstance().getCurrentUser();
         try {
-            photoModel.saveImageAndPath(imagesToSave, fileNames, currentUser, productNumber, tag);
+            photoModel.saveImageAndPath(imagesToSave, fileNames, currentUser, productNumber);
         } catch (Exception e) {
             e.printStackTrace();
             //TODO alert
@@ -227,7 +214,7 @@ public class CameraController implements Initializable {
         Navigator.getInstance().goTo(View.PHOTO_DOC, controller -> {
             if (controller instanceof PhotoDocController pDC) {
                 try {
-                    pDC.setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                    pDC.setProductNumber(productNumber);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -239,7 +226,7 @@ public class CameraController implements Initializable {
     public void handleReturn(ActionEvent actionEvent) {
         Navigator.getInstance().setRoot(View.PHOTO_DOC, controller -> {
             try {
-                ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                ((PhotoDocController) controller).setProductNumber(productNumber);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -257,7 +244,6 @@ public class CameraController implements Initializable {
     }
 
     private void openOverlayPreview(int i) {
-        isPreview = true;
         Image[] images = gallery.toArray(new Image[0]);
         if (i < images.length) {
             imgFullPreview.setImage(images[i]);
@@ -299,34 +285,20 @@ public class CameraController implements Initializable {
 
     @FXML
     public void handleClosePreview(ActionEvent actionEvent) {
-
-        if (java.util.Objects.equals(tag, "Additional")) {
-            closePreview();
-        }
-        else
-        {
-            handleFinishCamera(new ActionEvent());
-        }
+        closePreview();
     }
 
     public void closePreview() {
-            isPreview = false;
-            imgFullPreview.setVisible(false);
-            previewControls.setVisible(false);
-            btnFinish.setVisible(true);
-            btnReturn.setVisible(true);
-            btnCapture.setVisible(true);
-            currentPreviewIndex = -1;
+        imgFullPreview.setVisible(false);
+        previewControls.setVisible(false);
+        btnFinish.setVisible(true);
+        btnReturn.setVisible(true);
+        btnCapture.setVisible(true);
+        currentPreviewIndex = -1;
     }
 
     @FXML
     public void handleCaptureImage(ActionEvent actionEvent) {
-        captureImage();
-    }
-
-    @FXML
-    private void handlePressImage(MouseEvent mouseEvent) {
-        if(!isPreview)
         captureImage();
     }
 }

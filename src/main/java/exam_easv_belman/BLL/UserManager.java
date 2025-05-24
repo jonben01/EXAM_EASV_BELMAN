@@ -4,11 +4,7 @@ import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
 import exam_easv_belman.BLL.util.PBKDF2PasswordUtil;
 import exam_easv_belman.DAL.UserDAO;
-import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
-
-import java.util.List;
 
 public class UserManager {
 
@@ -33,39 +29,14 @@ public class UserManager {
         return user;
     }
 
-    public User authenticateUser(String QRKey) throws Exception {
-        List<User> allUsers = userDAO.getAllUsers();
-        for(User user : allUsers) {
-            if(user.getQrKey() != null) {
-                if (PBKDF2PasswordUtil.verifyPassword(QRKey, user.getQrKey())) {
-                    return user;
-                }
-            }
-        }
-        AlertHelper.showAlert("Error", "Invalid QR Key", Alert.AlertType.ERROR);
-        return null;
-    }
-
     public User createUser(User user) throws Exception {
         String rawPwd = user.getPassword();
         String hashedPwd = PBKDF2PasswordUtil.hashPassword(rawPwd);
         user.setPassword(hashedPwd);
-
-        String rawKey = user.getQrKey();
-        String hashedKey = PBKDF2PasswordUtil.hashPassword(rawKey);
-        user.setQrKey(hashedKey);
         return userDAO.createUser(user);
     }
 
     public ObservableList<User> getAllUsers() throws Exception {
          return userDAO.getAllUsers();
-    }
-
-    public void deleteUser(User user) {
-        userDAO.deleteUser(user);
-    }
-
-    public void attachSignatur(User user) throws Exception {
-        userDAO.attachSignatur(user);
     }
 }
