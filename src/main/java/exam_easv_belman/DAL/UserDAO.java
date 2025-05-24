@@ -3,8 +3,10 @@ package exam_easv_belman.DAL;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
+import exam_easv_belman.GUI.util.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,6 +43,9 @@ public class UserDAO implements IUserDataAccess {
                 user.setLastName(resultSet.getString("last_name"));
                 user.setEmail(resultSet.getString("email"));
                 user.setPhoneNumber(resultSet.getString("phone"));
+                user.setSignaturePath(resultSet.getString("signature_path"));
+
+                user.setQrKey(resultSet.getString("qr_key"));
 
                 return user;
             }
@@ -54,8 +59,9 @@ public class UserDAO implements IUserDataAccess {
     @Override
     public User createUser(User user) throws Exception {
 
-        String sql = "INSERT INTO Users (username, password_hash, role_id, first_name, last_name, email, phone) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (username, password_hash, role_id, first_Name, last_Name," +
+                "email, phone, qr_key, signature_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
 
         try (Connection connection = dbConnector.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -72,6 +78,9 @@ public class UserDAO implements IUserDataAccess {
             statement.setString(5, user.getLastName());
             statement.setString(6, user.getEmail());
             statement.setString(7, user.getPhoneNumber());
+            statement.setString(8, user.getQrKey());
+            statement.setString(9, user.getSignaturePath());
+
 
             statement.executeUpdate();
 
@@ -89,6 +98,18 @@ public class UserDAO implements IUserDataAccess {
 
     @Override
     public void deleteUser(User user) {
+        String sql = "DELETE FROM Users WHERE id = ?";
+
+        try (Connection connection = dbConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, user.getId());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            AlertHelper.showAlert("Error", "Error Deleting User", Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
 
     }
 
@@ -118,6 +139,7 @@ public class UserDAO implements IUserDataAccess {
                 user.setLastName(resultSet.getString("last_name"));
                 user.setEmail(resultSet.getString("email"));
                 user.setPhoneNumber(resultSet.getString("phone"));
+                user.setQrKey(resultSet.getString("qr_key"));
                 users.add(user);
             }
             return users;
@@ -127,8 +149,55 @@ public class UserDAO implements IUserDataAccess {
         }
     }
 
+   public void attachSignatur(User user) throws Exception {
+        String sql = "UPDATE Users SET signature_path = ? WHERE id = ?";
+
+       try (Connection connection = dbConnector.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+           statement.setString(1,user.getSignaturePath());
+           statement.setInt(2, user.getId());
+           statement.executeUpdate();
+       } catch (Exception e) {
+           AlertHelper.showAlert("Error", "Error attaching signature", Alert.AlertType.ERROR);
+           e.printStackTrace();
+       }
+
+   }
+
     @Override
     public String getPassword() {
         return "";
+    }
+
+    @Override
+    public User findByQR(String qrKey) throws Exception {
+        String sql = "SELECT * FROM dbo.Users WHERE qr_key = ?";
+
+        try (Connection connection = dbConnector.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, qrKey);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                User user = new User();
+
+                user.setId(resultSet.getInt("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setPassword(resultSet.getString("password_hash"));
+                user.setRole(resultSet.getInt("role_id") == 1 ? Role.ADMIN : resultSet.getInt("role_id") == 2 ? Role.OPERATOR : Role.QC);
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
+                user.setEmail(resultSet.getString("email"));
+                user.setPhoneNumber(resultSet.getString("phone"));
+                user.setQrKey(resultSet.getString("qr_key"));
+
+                return user;
+            }
+
+        } catch (SQLException e) {
+            throw new Exception();
+        }
+        return null;
     }
 }

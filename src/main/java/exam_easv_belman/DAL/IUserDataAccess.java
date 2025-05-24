@@ -15,4 +15,6 @@ public interface IUserDataAccess {
     List<User> getAllUsers() throws Exception;
 
     String getPassword();
+
+    User findByQR(String qrKey) throws Exception;
 }

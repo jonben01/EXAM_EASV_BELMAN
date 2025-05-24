@@ -14,7 +14,8 @@ public enum View {
     PHOTO_DOC("/views/PhotoDocView.fxml"),
     QCView("/views/QCView.fxml"),
     SEND_VIEW("/views/SendView.fxml"),
-    IMG_VIEW("/views/ImageView.fxml");
+    IMG_VIEW("/views/ImageView.fxml"),
+    CUSTOM_TAG("/views/CustomTagView.fxml");
 
 
     private final String FXML;

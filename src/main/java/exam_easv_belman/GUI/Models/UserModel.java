@@ -23,4 +23,19 @@ public class UserModel {
     public ObservableList<User> getAllUsers() throws Exception {
         return userManager.getAllUsers();
     }
+
+    public void deleteUser(User user) throws Exception {
+        userManager.deleteUser(user);
+    }
+
+    public User authenticateUser(String qrKey) throws Exception {
+        return userManager.authenticateUser(qrKey);
+    }
+
+    public void attachSignatur(User user) throws Exception {
+        userManager.attachSignatur(user);
+
+    }
 }
+
+

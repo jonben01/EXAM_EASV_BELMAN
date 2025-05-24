@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -16,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="936.0" prefWidth="675.0" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.PhotoDocController">
+<VBox prefHeight="625.0" prefWidth="918.0" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="exam_easv_belman.GUI.Controllers.PhotoDocController">
    <children>
       <HBox>
          <children>
@@ -33,6 +34,17 @@
                         <Font size="24.0" />
                      </font>
                   </Text>
+                  <MenuButton fx:id="btnProduct" mnemonicParsing="false" prefHeight="55.0" prefWidth="103.0" style="-fx-font-size: 24; -fx-text-fill: white;" stylesheets="@../css/general.css" text="XXX">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <padding>
+                        <Insets left="-12.0" top="3.0" />
+                     </padding>
+                  </MenuButton>
                   <Region HBox.hgrow="ALWAYS" />
                   <Button fx:id="btnQC" mnemonicParsing="false" onAction="#handleQC" text="QC">
                      <HBox.margin>
@@ -53,8 +65,8 @@
             <StackPane fx:id="photoGridContainer" VBox.vgrow="ALWAYS">
             <GridPane fx:id="gridPhoto" alignment="CENTER" prefHeight="700.0" prefWidth="675.0" vgap="2" VBox.vgrow="ALWAYS">
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" percentHeight="33.33" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -71,10 +83,10 @@
       </VBox>
       <BorderPane prefHeight="82.0" prefWidth="675.0">
          <bottom>
-            <HBox alignment="BOTTOM_CENTER" fillHeight="false" maxHeight="36.0" maxWidth="1.7976931348623157E308" prefHeight="36.0" prefWidth="675.0" BorderPane.alignment="CENTER">
+            <HBox alignment="BOTTOM_CENTER" fillHeight="false" maxHeight="77.0" maxWidth="1.7976931348623157E308" prefHeight="77.0" prefWidth="918.0" BorderPane.alignment="CENTER">
                <children>
                   <Region prefHeight="51.0" prefWidth="192.0" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="btnOpenCamera" mnemonicParsing="false" onAction="#handleCamera" prefHeight="51.0" prefWidth="55.0" text="📷">
+                  <Button fx:id="btnOpenCamera" mnemonicParsing="false" onAction="#handleCamera" prefHeight="61.0" prefWidth="71.0" text="📷">
                      <font>
                         <Font size="21.0" />
                      </font>
@@ -82,15 +94,7 @@
                         <Insets bottom="15.0" />
                      </HBox.margin>
                   </Button>
-                  <Region prefHeight="51.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" text="Save Changes">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="30.0" right="15.0" />
-                     </HBox.margin>
-                  </Button>
+                  <Region prefHeight="51.0" prefWidth="192.0" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
          </bottom>

@@ -30,3 +30,15 @@
     -fx-cursor: hand;
 }
 
+.photo-tag-label {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 3px 5px;
+    -fx-border-radius: 5;
+    -fx-wrap-text: true;
+    -fx-alignment: center;
+}
+
+
+

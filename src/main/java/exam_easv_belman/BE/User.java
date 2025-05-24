@@ -12,12 +12,15 @@ public class User {
     private String lastName;
     private String email;
     private String phoneNumber;
+    private String qrKey;
+    private String signaturePath;
 
-    public User(int id, String username, String password, Role role) {
+    public User(int id, String username, String password, Role role, String signaturePath) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.signaturePath = signaturePath;
     }
 
     public User(String username, String password, Role role, String firstName, String lastName, String email, String phoneNumber) {
@@ -104,6 +107,23 @@ public class User {
         return role;
     }
 
+    public String getSignaturePath() {
+        return signaturePath;
+    }
+    public void setSignaturePath(String signaturePath) {
+        this.signaturePath = signaturePath;
+    }
+
+    public String getQrKey() {
+        return qrKey;
+    }
+
+    public void setQrKey(String qrKey) {
+        this.qrKey = qrKey;
+    }
+
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -116,5 +136,8 @@ public class User {
         return Objects.hash(id);
     }
 
-
+    @Override
+    public String toString() {
+        return "Name: " + firstName + " " + lastName + ". Username: " + username;
+    }
 }
