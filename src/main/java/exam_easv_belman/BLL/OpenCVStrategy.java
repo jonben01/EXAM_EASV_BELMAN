@@ -14,16 +14,14 @@ import java.io.ByteArrayInputStream;
 public class OpenCVStrategy implements PhotoStrategy {
 
     private VideoCapture camera;
-    private int width = 1280;
-    private int height = 720;
 
     @Override
     public void start() throws CameraNotFoundException {
         OpenCV.loadLocally();
 
         camera = new VideoCapture(0);
-        camera.set(Videoio.CAP_PROP_FRAME_WIDTH, width);
-        camera.set(Videoio.CAP_PROP_FRAME_HEIGHT, height);
+        camera.set(Videoio.CAP_PROP_FRAME_WIDTH, 1280);
+        camera.set(Videoio.CAP_PROP_FRAME_HEIGHT, 720);
 
         if (!camera.isOpened()) {
             throw new CameraNotFoundException();
@@ -47,26 +45,6 @@ public class OpenCVStrategy implements PhotoStrategy {
             //TODO custom exception and alert the user in the gui layer, say BLANK FRAME or smth
         }
 
-        MatOfByte buffer = new MatOfByte();
-        Imgcodecs.imencode(".png", frame, buffer);
-        return new Image(new ByteArrayInputStream(buffer.toArray()));
-    }
-
-    @Override
-    public void setSize(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    @Override
-    public Mat grabRawMat() {
-        Mat frame = new Mat();
-        camera.read(frame);
-        return frame;
-    }
-
-    @Override
-    public Image convertToImage(Mat frame) {
         MatOfByte buffer = new MatOfByte();
         Imgcodecs.imencode(".png", frame, buffer);
         return new Image(new ByteArrayInputStream(buffer.toArray()));

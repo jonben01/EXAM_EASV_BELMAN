@@ -10,8 +10,6 @@ public class Photo {
     String filepath;
     int uploadedBy;
     LocalDateTime uploadTime;
-    String comment;
-    String tag;
 
     public Photo(){}
 
@@ -54,14 +52,6 @@ public class Photo {
     public void setUploadTime(LocalDateTime uploadTime) {
         this.uploadTime = uploadTime;
     }
-
-    public String getComment() {return comment;}
-
-    public void setComment(String comment) {this.comment = comment;}
-
-    public String getTag() {return tag;}
-
-    public void setTag(String tag) {this.tag = tag;}
 
     @Override
     public String toString()

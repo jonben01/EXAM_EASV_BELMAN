@@ -1,9 +1,7 @@
 package exam_easv_belman.GUI.Controllers;
 
-import exam_easv_belman.BE.Product;
 import exam_easv_belman.BE.Role;
 import exam_easv_belman.BE.User;
-import exam_easv_belman.GUI.Models.ProductModel;
 import exam_easv_belman.GUI.Navigator;
 import exam_easv_belman.GUI.SessionManager;
 import exam_easv_belman.GUI.View;
@@ -17,9 +15,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import javax.mail.Session;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -32,9 +27,7 @@ public class OrderController {
 
     //TODO take orders from db not just these hardcoded values
     private final List<String> orders = Arrays.asList("1001", "1002", "1003", "ORD-1001");
-    private List<Product> products;
-    private List<String> productNames;
-    private ProductModel productModel;
+    private List<String> products = Arrays.asList("ORD-1001-001", "ORD-1001-002");
     @FXML
     private Button btnSearch;
     @FXML
@@ -44,15 +37,7 @@ public class OrderController {
 
 
     @FXML
-    private void initialize() throws Exception {
-        productModel = new ProductModel();
-        productNames = new ArrayList<>();
-        products = productModel.getAvailableProducts();
-        for(Product product : products)
-        {
-            String tempName = product.getProduct_number();
-            productNames.add(tempName);
-        }
+    private void initialize() {
         Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/icon-search.png")));
         ImageView imgView = new ImageView(img);
         btnSearch.setGraphic(imgView);
@@ -80,7 +65,7 @@ public class OrderController {
             return;
         }
 
-        if (!orders.contains(inputOrderNumber) && !productNames.contains(inputOrderNumber)) {
+        if (!orders.contains(inputOrderNumber) && !products.contains(inputOrderNumber)) {
 
             AlertHelper.showAlert("Error", "The order/product number entered does not exist", Alert.AlertType.ERROR);
             return;
@@ -125,21 +110,24 @@ public class OrderController {
                 System.out.println(controller);
                 if (controller instanceof PhotoDocController) {
                     if(!IsProduct) {
-                        SessionManager.getInstance().setIsProduct(false);
-                        SessionManager.getInstance().setCurrentProductNumber(null);
-                    }
-                    else if(IsProduct) {
-                        SessionManager.getInstance().setIsProduct(true);
-                        SessionManager.getInstance().setCurrentProductNumber(orderNumber);
-                    }
                         try {
-                            ((PhotoDocController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
+                            ((PhotoDocController) controller).setOrderNumber(orderNumber);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
+                    }
+                    else if(IsProduct)
+                    {
+                        try {
+                            ((PhotoDocController) controller).setProductNumber(orderNumber);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
             });
         } catch (Exception e) {
+            e.printStackTrace();
             AlertHelper.showAlert("Error", "Failed to load PhotoDocView", Alert.AlertType.ERROR);
         }
 
@@ -149,20 +137,12 @@ public class OrderController {
         try {
             Navigator.getInstance().setRoot(View.QCView, controller -> {
                 if (controller instanceof QCController) {
-
                     if(!IsProduct) {
-                        SessionManager.getInstance().setIsProduct(false);
-                        SessionManager.getInstance().setCurrentProductNumber(null);
+                        ((QCController) controller).setOrderNumber(orderNumber);
+
                     }
                     else if(IsProduct) {
-                        SessionManager.getInstance().setIsProduct(true);
-                        SessionManager.getInstance().setCurrentProductNumber(orderNumber);
-                    }
-
-                    try {
-                        ((QCController) controller).setOrderNumber(SessionManager.getInstance().getCurrentOrderNumber());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        ((QCController) controller).setProductNumber(orderNumber);
                     }
                 }
             });

@@ -118,7 +118,6 @@ public class Navigator {
 
     public void setRoot(View view, Consumer<Object> controllerConsumer) {
         try {
-            System.out.println("Navigator loading View");
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(Navigator.class.getResource(view.getFXML())));
             Parent root = loader.load();
 
@@ -129,15 +128,11 @@ public class Navigator {
             }
 
             currentController = loader.getController();
-            System.out.println("Navigator: FXML loaded, controller is " + currentController);
             if (controllerConsumer != null && currentController != null) {
                 controllerConsumer.accept(currentController);
-            }else{
-                System.err.println("Navigator: Controller is null or no consumer provided.");
             }
 
             stage.centerOnScreen();
-            System.out.println("Navigator: View successfully set to " + view);
         } catch (IOException e) {
             //TODO exception or alert
         }

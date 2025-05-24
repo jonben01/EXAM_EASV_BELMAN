@@ -7,8 +7,6 @@ public class SessionManager {
     private static volatile SessionManager instance;
     private User currentUser;
     private String currentOrderNumber;
-    private boolean isProduct;
-    private String currentProductNumber;
 
     private SessionManager() {}
 
@@ -41,18 +39,6 @@ public class SessionManager {
     }
     public String getCurrentOrderNumber() {
         return currentOrderNumber;
-    }
-    public void setIsProduct(boolean isProduct) {
-        this.isProduct = isProduct;
-    }
-    public boolean getIsProduct() {
-        return isProduct;
-    }
-    public void setCurrentProductNumber(String productNumber) {
-        this.currentProductNumber = productNumber;
-    }
-    public String getCurrentProductNumber() {
-        return currentProductNumber;
     }
 
 
